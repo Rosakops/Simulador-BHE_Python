@@ -1,0 +1,174 @@
+
+:root{
+  --tinta:#1c1f24; --suave:#5b6470; --linea:#e3e6ea; --fondo:#fbfcfd;
+  --papel:#ffffff; --verde:#2e7d32; --rojo:#c62828; --gris:#78848f;
+  --azul:#1565c0; --morado:#6a1b9a; --aviso:#b26a00; --avisofondo:#fff8ec;
+  --ancho:min(1120px, 100% - 3rem);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
+  min-height:100vh;
+}
+.envoltorio{width:var(--ancho); margin-inline:auto}
+
+/* ---- cabeceras ---- */
+header.principal{background:linear-gradient(160deg,#12213a,#1f3b63); color:#fff;
+  padding:3.2rem 0 2.6rem}
+header.pagina{background:linear-gradient(160deg,#12213a,#1f3b63); color:#fff;
+  padding:2.1rem 0 1.9rem}
+header .expediente{font-size:.75rem; letter-spacing:.16em; text-transform:uppercase;
+  color:#9fc4f0; margin:0 0 .7rem}
+header.principal h1{font-size:1.85rem; line-height:1.3; margin:0 0 .5rem; font-weight:650}
+header.pagina h1{font-size:1.5rem; line-height:1.25; margin:0 0 .35rem; font-weight:650}
+header .sub{color:#c9dcf3; margin:0 0 1.4rem; font-size:1rem}
+header.pagina .sub{margin:0; font-size:.93rem}
+.meta{display:flex; flex-wrap:wrap; gap:.5rem .6rem}
+.meta span{background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16);
+  padding:.3rem .7rem; border-radius:999px; font-size:.82rem}
+
+/* ---- navegación ---- */
+nav.barra{position:sticky; top:0; z-index:20; background:rgba(251,252,253,.94);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--linea)}
+nav.barra ul{display:flex; gap:.2rem; list-style:none; margin:0; padding:.5rem 0;
+  overflow-x:auto; width:var(--ancho); margin-inline:auto}
+nav.barra a{color:var(--suave); text-decoration:none; font-size:.87rem;
+  white-space:nowrap; padding:.4rem .8rem; border-radius:7px; display:block}
+nav.barra a:hover{background:#eef1f5; color:var(--tinta)}
+nav.barra a.activo{background:#12213a; color:#fff; font-weight:600}
+
+/* ---- sub-navegación de clase ---- */
+nav.subbarra{background:#eef1f5; border-bottom:1px solid var(--linea)}
+nav.subbarra .envoltorio{display:flex; gap:.35rem; padding:.4rem 0}
+nav.subbarra a{color:var(--suave); text-decoration:none; font-size:.82rem;
+  padding:.25rem .7rem; border-radius:999px; white-space:nowrap;
+  border:1px solid transparent}
+nav.subbarra a:hover{background:#fff; color:var(--tinta)}
+nav.subbarra a.activo{background:#fff; color:var(--tinta); font-weight:600;
+  border-color:var(--linea)}
+
+main{flex:1; padding:2.4rem 0 1rem}
+main > .envoltorio > h2:first-child{margin-top:0}
+h2{font-size:1.3rem; margin:2.6rem 0 .3rem; font-weight:650;
+  padding-bottom:.55rem; border-bottom:2px solid var(--linea)}
+h3{font-size:1.05rem; margin:2rem 0 .6rem; font-weight:620}
+.entradilla{color:var(--suave); margin:.7rem 0 1.5rem; max-width:64ch}
+
+/* ---- tarjetas ---- */
+.tarjetas{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.tarjeta{background:var(--papel); border:1px solid var(--linea); border-radius:11px;
+  padding:1.15rem 1.25rem}
+.tarjeta .cifra{font-size:1.7rem; font-weight:660; letter-spacing:-.02em; line-height:1.15}
+.tarjeta .rotulo{font-size:.78rem; text-transform:uppercase; letter-spacing:.09em;
+  color:var(--suave); margin-bottom:.45rem}
+.tarjeta .pie{font-size:.83rem; color:var(--suave); margin-top:.45rem}
+.tarjeta.verde .cifra{color:var(--verde)} .tarjeta.rojo .cifra{color:var(--rojo)}
+.tarjeta.azul .cifra{color:var(--azul)}  .tarjeta.morado .cifra{color:var(--morado)}
+
+/* ---- tarjetas de navegación de la portada ---- */
+.indice{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  margin-top:1.4rem}
+a.bloque{display:block; text-decoration:none; color:inherit; background:var(--papel);
+  border:1px solid var(--linea); border-radius:11px; padding:1.25rem 1.35rem;
+  transition:border-color .15s, transform .15s}
+a.bloque:hover{border-color:#9db6d4; transform:translateY(-2px)}
+a.bloque .n{font-size:.74rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--azul); font-weight:700}
+a.bloque b{display:block; font-size:1.08rem; margin:.3rem 0 .35rem}
+a.bloque span{font-size:.88rem; color:var(--suave)}
+
+/* ---- avisos ---- */
+.aviso{background:var(--avisofondo); border:1px solid #f0d9ae;
+  border-left:4px solid var(--aviso); border-radius:9px; padding:.95rem 1.15rem;
+  margin:1.2rem 0; font-size:.92rem}
+.aviso strong{color:var(--aviso)}
+
+/* ---- tablas ---- */
+.tabla-scroll{overflow-x:auto; margin:1.1rem 0; border:1px solid var(--linea);
+  border-radius:10px; background:var(--papel)}
+table{border-collapse:collapse; width:100%; font-size:.9rem}
+th,td{padding:.6rem .85rem; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top}
+th{background:#f4f6f9; font-weight:600; font-size:.8rem; text-transform:uppercase;
+  letter-spacing:.05em; color:var(--suave)}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+
+.etq{display:inline-block; padding:.16rem .55rem; border-radius:999px;
+  font-size:.76rem; font-weight:600; white-space:nowrap}
+.etq.no{background:#fdecea; color:var(--rojo)}
+.etq.si{background:#e8f5e9; color:var(--verde)}
+.etq.nn{background:#eceff1; color:var(--gris)}
+.rev{font-size:.84rem; color:var(--suave)}
+
+/* ---- figuras ---- */
+.figura{background:var(--papel); border:1px solid var(--linea); border-radius:11px;
+  overflow:hidden; margin:1.4rem 0}
+.figura img{width:100%; display:block; background:#fff; cursor:zoom-in}
+
+/* ---- lightbox de figuras ---- */
+.lightbox{display:none; position:fixed; inset:0; background:rgba(20,22,26,.92);
+  z-index:999; padding:3.5vh 3vw; box-sizing:border-box; overflow:auto}
+.lightbox.abierto{display:flex; align-items:center; justify-content:center}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5); cursor:zoom-in;
+  transition:transform .15s ease; transform-origin:center center}
+.lightbox img.zoom{max-width:none; max-height:none; width:180%; cursor:grab}
+.lightbox img.zoom.arrastrando{cursor:grabbing; transition:none}
+.lightbox.zoom-activo{justify-content:flex-start; align-items:flex-start}
+.lightbox .cerrar{position:fixed; top:1.2rem; right:1.6rem; color:#fff;
+  font-size:2rem; line-height:1; cursor:pointer; opacity:.85; z-index:1000}
+.lightbox .cerrar:hover{opacity:1}
+.lightbox .ayuda{position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
+  color:#cfd3d8; font-size:.8rem; z-index:1000}
+.figura figcaption{padding:.9rem 1.15rem; border-top:1px solid var(--linea)}
+.figura figcaption b{display:block; margin-bottom:.2rem; font-size:.95rem}
+.figura figcaption span{font-size:.87rem; color:var(--suave)}
+
+/* ---- dataset de 50 liposomas ---- */
+details.liposoma{border:1px solid var(--linea); border-radius:10px;
+  margin-bottom:.6rem; padding:.5rem 1.1rem; background:var(--papel)}
+details.liposoma summary{cursor:pointer; font-weight:600; padding:.4rem 0}
+details.liposoma .dataset50-figs{display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1rem; margin:1rem 0}
+details.liposoma .dataset50-figs .figura{margin:0}
+@media (max-width:900px){details.liposoma .dataset50-figs{grid-template-columns:1fr}}
+
+/* ---- listas ---- */
+.fuente{padding:.85rem 0; border-bottom:1px solid var(--linea)}
+.fuente:last-child{border-bottom:none}
+.fuente .aut{font-weight:600; font-size:.92rem}
+.fuente .tit{font-size:.92rem}
+.fuente a{font-size:.83rem; color:var(--azul); word-break:break-all}
+.fuente .uso{display:inline-block; font-size:.74rem; background:#eef2f7;
+  color:var(--suave); padding:.13rem .5rem; border-radius:999px; margin-top:.25rem}
+.prio{display:inline-block; font-size:.72rem; font-weight:700; padding:.14rem .5rem;
+  border-radius:999px; text-transform:uppercase; letter-spacing:.05em}
+.prio.alta{background:#fdecea; color:var(--rojo)}
+.prio.media{background:#fff4e0; color:var(--aviso)}
+
+code{background:#eef1f5; padding:.1rem .35rem; border-radius:4px; font-size:.87em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+a{color:var(--azul)}
+.formula{text-align:center; font-size:1.02rem; margin:1.1rem 0}
+
+footer{margin-top:3rem; padding:1.8rem 0 2.6rem; border-top:1px solid var(--linea);
+  color:var(--suave); font-size:.85rem; background:var(--papel)}
+
+/* ---- fichas ---- */
+.ficha{background:var(--papel); border:1px solid var(--linea); border-radius:11px;
+  padding:1.8rem 2rem; margin:0 0 1.5rem}
+.ficha h2{font-size:1.2rem; margin-top:1.8rem} .ficha h2:first-child{margin-top:0}
+.ficha h3{font-size:1rem} .ficha h4{font-size:.95rem; margin:1.3rem 0 .4rem}
+.ficha blockquote{border-left:3px solid var(--linea); margin:1rem 0;
+  padding:.2rem 0 .2rem 1rem; color:var(--suave)}
+.volver{display:inline-block; margin:0 0 1.3rem; font-size:.9rem}
+
+@media (max-width:640px){
+  header.principal h1{font-size:1.35rem} header.pagina h1{font-size:1.2rem}
+  .ficha{padding:1.2rem}
+}
+@media print{nav.barra{display:none} body{background:#fff} .figura{break-inside:avoid}}

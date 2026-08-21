@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Resumen · JC155 · SENACYT</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="principal"><div class="envoltorio">
+  <p class="expediente">JC155 · SENACYT</p>
+  <h1>Modelado computacional de parámetros físico-químicos de nanopartículas para la permeabilidad de la barrera hematoencefálica</h1>
+  <p class="sub">Un estudio in silico como aproximación a terapias para desmielinización</p>
+  <div class="meta">
+    <span>Jhovan Watson · Astrid Torres</span>
+    <span>Fingolimod (FTY720)</span>
+    <span>Esclerosis múltiple</span>
+    <span>Generado el 2026-08-18</span>
+  </div>
+</div></header>
+<nav class="barra"><ul><li><a href="index.html" class="activo">Resumen</a></li><li><a href="liposoma.html">Liposoma</a></li><li><a href="metodo.html">Método</a></li><li><a href="bibliografia.html">Bibliografía</a></li></ul></nav>
+
+<main><div class="envoltorio">
+
+<div class="tarjetas">
+  <div class="tarjeta azul"><div class="rotulo">Tamiz del glicocálix</div>
+    <div class="cifra">≤ 9.00 nm</div></div>
+  <div class="tarjeta rojo"><div class="rotulo">Envolvimiento de membrana</div>
+    <div class="cifra">≥ 14.56 nm</div></div>
+  <div class="tarjeta verde"><div class="rotulo">Separación entre las dos</div>
+    <div class="cifra">5.56 nm</div></div>
+  <div class="tarjeta"><div class="rotulo">Captación fagocítica</div>
+    <div class="cifra">≥ 550 nm</div></div>
+  <div class="tarjeta verde"><div class="rotulo">Suelo del liposoma</div>
+    <div class="cifra">≥ 12.0 nm</div></div>
+</div>
+
+<h2>Resultados</h2>
+<p>Los dos rangos de tamaño teóricos para el paso pasivo hacia el cerebro no se solapan: el tamiz del
+glicocálix exige un diámetro de hasta 9.00 nm y el envolvimiento de membrana exige al menos 14.56 nm.
+La separación entre ambos rangos es de 5.56 nm, un resultado geométrico firme dentro del barrido de
+sensibilidad aplicado. Sin embargo, superar el tamaño del tamiz ya no se cuenta como exclusión
+automática: dos medidas reales en barrera hematoencefálica (una en tejido nativo, otra en cultivo)
+muestran nanopartículas más grandes que ese poro cruzando de forma medible, así que el simulador
+reporta ese caso como dato insuficiente para decidir, no como bloqueo, salvo que otro criterio
+(carga superficial, tiempos de tránsito) sí decida por su cuenta.</p>
+<p>De las cuatro formulaciones reales evaluadas:</p>
+<p><b>Gong 2022</b> (145 nm, carga muy negativa) queda excluida en las cuatro vías de entrada: su
+carga superficial es demasiado negativa para difundir en el tejido cerebral una vez liberada, y esa
+es la compuerta que decide en su caso, no el tamaño.</p>
+<p><b>Mao 2014</b> (157.5 nm, carga ligeramente positiva) no tiene resultado en ninguna de las cuatro
+vías: faltan datos en varias compuertas (glicocálix, entrada por caveola, tránsito celular, cantidad
+de fármaco entregado).</p>
+<p><b>Chow 2025</b> (134 nm, carga casi neutra) no tiene resultado en tres de las cuatro vías; queda
+excluida solo en la vía celular, porque su tamaño (134 nm) está muy por debajo del mínimo necesario
+para que un macrófago la capte de forma eficiente (550 nm).</p>
+<p><b>Muselman 2026</b> (700 nm, carga neutra) queda excluida en tres de las cuatro vías por el mismo
+criterio de carga que Gong 2022. En la vía celular no hay resultado: el tiempo que tarda un monocito
+en llegar al cerebro inflamado (24–48 h) se solapa con el tiempo que tarda el nanotransportador en
+liberar el fármaco (más de 24 h, sin techo medido en la literatura), así que falta el dato que separe
+ambos plazos.</p>
+<p><b>Empates técnicos.</b> Este resultado queda dentro del margen de duda del propio barrido y no
+debe citarse como cerrado: la separación entre los dos rangos de tamaño cae a 0.26 nm en el escenario
+más permisivo del barrido.</p>
+
+<h2>Alcance y limitaciones del simulador</h2>
+<p>Este simulador es una herramienta de cribado con trazabilidad completa a fuente científica
+publicada, no un modelo predictivo validado. La diferencia importa: cribado significa que cada
+criterio aplica un umbral físico medido y publicado a un diseño concreto; predicción validada
+significaría que el resultado del modelo se contrastó contra una medida real de adhesión o
+permeación de ese mismo tipo de diseño, y ese contraste todavía no existe para ninguna de las cuatro
+formulaciones reales evaluadas.</p>
+<p>Sí existen ya dos medidas reales en barrera hematoencefálica que sirvieron para corregir el criterio
+simple de tamaño del glicocálix y de entrada por caveola (ver Resultados): mostraron que el tamaño
+solo, sin más información, no basta para excluir un diseño. Lo que todavía no existe es una medida
+real de adhesión o permeación específicamente a la escala de un liposoma (130–700 nm) que confirme o
+descarte el modelo de energía más fino que el simulador usa para el glicocálix. Sin ese dato, ese
+criterio más fino sigue sin poder conectarse a los veredictos finales.</p>
+<p>No fue posible determinar con confianza cuánto fármaco entrega cada diseño una vez dentro del
+cerebro. Ese cálculo se investigó a fondo, presentó inconsistencias al verificarlo, y se decidió
+reportarlo como dato desconocido en vez de publicar una cifra sin verificar.</p>
+<p>La hipótesis original del proyecto incluía el coeficiente de partición octanol-agua (LogP) del
+nanotransportador como factor de diseño. Ese factor no se implementó: el LogP es una propiedad bien
+definida para una molécula (la del fingolimod, el fármaco, ya usada en otra parte del análisis), pero
+no existe una física publicada que conecte el LogP de un nanotransportador completo, como un
+liposoma, con su capacidad de adherirse o atravesar la barrera. Añadirlo sin una fuente científica
+que lo respalde habría significado inventar un mecanismo, algo que este proyecto decidió no hacer.</p>
+<p>El modelo cubre únicamente las etapas de adhesión y envolvimiento del nanotransportador en la
+superficie del vaso sanguíneo cerebral. Las etapas posteriores, el paso activo hacia el otro lado de
+la barrera, el tránsito celular y la liberación final del fármaco, dependen de energía celular y
+quedaron fuera del alcance de este modelo desde su planteamiento inicial.</p>
+<p>Como consecuencia de estos huecos, ninguna de las cuatro formulaciones reales evaluadas obtiene un
+resultado positivo confirmado en ninguna vía de entrada: una (Gong 2022) queda excluida en las
+cuatro por su carga, otra (Muselman 2026) en tres de cuatro por el mismo motivo, y las dos restantes
+quedan mayormente sin resultado por falta de dato, no por haber sido descartadas.</p>
+
+<h2>Trabajo futuro</h2>
+<p>El simulador actual da un veredicto binario por compuerta: pasa, falla o sin dato. El paso
+siguiente planeado es sustituir ese veredicto binario por una probabilidad con un margen de
+incertidumbre, y encadenar esas probabilidades a lo largo de cada vía de entrada. La arquitectura
+ya lo permite: cada compuerta guarda el valor medido, el umbral y el margen entre ambos, así que
+el cambio no exige rehacer el modelo desde cero.</p>
+<p>Antes de dar ese paso, el plan es revisar a mano, artículo por artículo y cálculo por cálculo,
+cada compuerta del modelo actual contra su fuente primaria, como control de calidad antes de
+extender el modelo.</p>
+<p>Ese siguiente paso sería también la vía natural para incorporar una medida real de adhesión o
+permeación a la escala de un liposoma, si llega a existir, y empezar a contrastar el modelo contra
+un dato experimental propio en vez de solo contra la literatura.</p>
+<p>Hoy los diseños que el simulador evalúa están fijos en el código: para probar una formulación
+nueva hay que editarlo a mano. El plan es abrir una entrada donde cualquier persona escriba el
+tamaño, la carga superficial y los demás parámetros físico-químicos de su propio nanotransportador,
+y el simulador aplique las mismas compuertas ya validadas para darle un veredicto, sin depender de
+que esa formulación esté precargada.</p>
+
+<h2>Secciones</h2>
+<div class="indice"><a class="bloque" href="liposoma.html"><span class="n">01</span><b>Liposoma</b><span>Suelo geométrico y liposomas reales publicados.</span></a><a class="bloque" href="metodo.html"><span class="n">02</span><b>Método</b><span>Veredictos, rutas y compuertas.</span></a></div>
+
+</div></main>
+<footer><div class="envoltorio">
+  <p>JC155 · SENACYT · documento interno · resultados
+  preliminares, no publicados.</p>
+  <p>Generado el 2026-08-18 · <code>sh correr.sh web</code></p>
+</div></footer>
+</body></html>
