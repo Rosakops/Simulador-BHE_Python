@@ -12,11 +12,12 @@
 #  Este archivo NO modifica ningún módulo del simulador. Solo importa y lee.
 #
 #  Lo único que va escrito a mano aquí son los bloques marcados con
-#  "MANTENIDO A MANO": bibliografía, recuento de la validación y pendientes,
-#  porque viven en los .md y no en el código. Están señalados en la propia web.
+#  "MANTENIDO A MANO": la bibliografía, en sus dos formas: FUENTES (anclaje
+#  por compuerta, lo que vigila la guarda de main()) y cuerpo_bibliografia()
+#  (las referencias Vancouver que se publican).
 #
 #  USO:  python3 construir_web.py        (o: sh correr.sh web)
-#  SALE: web/index.html, web/estilo.css, web/fichas/*.html y los PNG copiados.
+#  SALE: web/index.html, web/estilo.css y los PNG copiados.
 # =============================================================================
 
 import html
@@ -49,42 +50,6 @@ PROYECTO = dict(
     farmaco="Fingolimod (FTY720)",
     enfermedad="Esclerosis múltiple",
 )
-
-VALIDACION = dict(
-    fuente="verificacion/resultados_validacion.md",
-    fecha="2026-08-10",
-    conteo=[("C1 · compatible con el modelo", 5),
-            ("C2 · no atraviesa una BHE intacta", 1),
-            ("C3 · barrera comprometida", 1),
-            ("C4 · contraejemplo confirmado", 0),
-            ("C4 · contraejemplo sin resolver", 0)],
-    veredicto=("Se aplica el primer supuesto de la sección 7 del protocolo: "
-               "la predicción P1 SOBREVIVE. No queda ningún punto donde el "
-               "modelo pueda caerse por contraejemplo."),
-)
-
-PENDIENTES = [
-    ("G.6", "baja", "Densidad de PLGA por picnometría: la de Parker es una "
-     "derivación acústica que sus propios autores llaman estimación."),
-    ("C8", "media", "La compuerta de difusión del fármaco no discrimina: aprueba "
-     "cualquier molécula por debajo de 38 nm."),
-    ("C9", "CERRADA", "El «~1 nm» del fingolimod era una estimación sin fuente. "
-     "Sustituido el 2026-08-13 por un valor DERIVADO y reproducible: 1.683 nm de "
-     "dimensión máxima (0.858 nm de esfera equivalente), 50 confórmeros "
-     "ETKDGv3 + MMFF94, en <code>tamano_farmaco.py</code>. Es un cálculo, no una "
-     "medida: falta un radio hidrodinámico experimental."),
-    ("G.2", "alta", "Carga útil. La compuerta EXISTE desde el 2026-08-13 en las "
-     "cuatro rutas y es DESCONOCIDA permanente. Faltan tres números: carga de un "
-     "dendrímero de generación alta con fingolimod, moléculas de fingolimod por "
-     "liposoma y dosis necesaria en parénquima."),
-    ("G.3", "media", "Tamaño del PAMAM en agua a pH fisiológico. Prosa mide en "
-     "metanol y el techo queda a 0.40 nm del umbral de envolvimiento."),
-    ("V-7", "media", "Tamaño de malla del glicocálix cerebral envejecido, no "
-     "solo el espesor."),
-    ("Cuantitativa", "alta", "Sustituir el booleano de cada compuerta por una "
-     "probabilidad con banda de incertidumbre. Es lo que elimina el "
-     "«no evaluable» sin inventarse ningún dato."),
-]
 
 FUENTES = [
     ("Weinbaum S, Zhang X, Han Y, Vink H, Cowin SC (2003)",
@@ -424,181 +389,9 @@ def _figuras_catalogo(prefijo):
 
 FIGURAS_LIP_REALES = _figuras_catalogo("lip_reales")
 FIGURAS_LIP_TEORICOS = _figuras_catalogo("lip_teoricos")
-FIGURAS_DEND_REALES = _figuras_catalogo("dend_reales")
-FIGURAS_DEND_TEORICOS = _figuras_catalogo("dend_teoricos")
-FIGURAS_POL_TEORICOS = _figuras_catalogo("pol_teoricos")
-
-FIGURAS_POLIMERO_TEORICOS_PROPIAS = [
-    ("polimeros_teoricos.png", "Los tres contra las dos ventanas",
-     "Con el suelo de su propia clase: glóbulo colapsado o micela cargada."),
-]
-
-FIGURAS_POLIMERO = [
-    ("polimero_suelo.png", "Suelo frente a masa molar",
-     "Una curva por cada densidad medida por Parker 2010."),
-    ("clases_ventanas.png", "Las tres clases contra las dos ventanas",
-     "La franja rayada no pertenece a ninguna ventana."),
-]
-
-FIGURAS_DENDRIMERO_PROPIAS = [
-    ("dendrimero_ventana.png", "Ventana geométrica y zoom del techo", ""),
-    ("dendrimero_generaciones.png", "Diámetro por generación",
-     "SAXS medido frente a dinámica molecular calculada."),
-    ("dendrimero_vs_liposoma.png", "Las dos clases contra las dos ventanas", ""),
-    ("dendrimero_carga.png", "K(1:1) por generación y pH",
-     "Devarakonda 2004, Tabla 2."),
-]
-
-FIGURAS_DENDRIMERO_TEORICOS_PROPIAS = [
-    ("dendrimeros_teoricos.png", "Los tres sobre la ventana geométrica",
-     "Verde pasa · rojo falla · gris sin dato para esa química."),
-    ("dend_teoricos_vs_medidos.png", "Fichas frente a las generaciones medidas",
-     "El Ø de la ficha del PAMAM G4 cae por encima del G10, no donde el G4."),
-    ("dend_teoricos_pmf.png", "El modelo de acople de las fichas",
-     "El pozo depende solo del logP del fármaco; la barrera de superficie, del ζ."),
-]
-
 # Todas las que hay que copiar a web/img.
 TODAS_LAS_FIGURAS = (FIGURAS_ENVOLVIMIENTO + FIGURAS_ENVOLVIMIENTO_TEORICOS
-                     + FIGURAS_LIP_REALES + FIGURAS_LIP_TEORICOS
-                     + FIGURAS_DEND_REALES + FIGURAS_DEND_TEORICOS
-                     + FIGURAS_POL_TEORICOS
-                     + FIGURAS_DENDRIMERO_PROPIAS
-                     + FIGURAS_DENDRIMERO_TEORICOS_PROPIAS
-                     + FIGURAS_POLIMERO_TEORICOS_PROPIAS
-                     + FIGURAS_POLIMERO)
-
-FICHAS = [
-    ("verificacion_dendrimero_tarea_G_1a.md", "G.1a · Límite geométrico del dendrímero"),
-    ("verificacion_polimero_micela_tarea_G_1b.md", "G.1b · Límite del polímero macizo (incluye la micela, ya fuera de alcance)"),
-    ("verificacion_compuertas_C2_D3.md", "C.2 y D.3 · Unión al glicocálix y acceso al receptor"),
-    ("verificacion_endotelio_tarea_V_6.md", "V-6 · Señal endotelial frente a parenquimatosa"),
-    ("verificacion_envejecimiento_tarea_V_1B.md", "V-1B · El caso del envejecimiento"),
-    ("verificacion_nance_tarea_V_1.md", "V-1 · Difusión en el espacio extracelular"),
-    ("verificacion_transito_tarea_B_3.md", "B.3 · Tránsito del monocito"),
-    ("verificacion_zeta_positivo_difusion.md", "ζ positivo · Difusión extracelular"),
-    ("verificacion_zona_gris_tamano.md", "Zona gris 114–200 nm · Difusión extracelular"),
-    ("verificacion_fty720_fosfato.md", "F.1 · FTY720-fosfato vs fingolimod neutro"),
-    ("verificacion_kappa_C5_C6.md", "C5 y C6 · el barrido de κ"),
-    ("resultados_validacion.md", "Resultados de la validación"),
-    ("protocolo_validacion.md", "Protocolo de validación"),
-]
-
-
-# =============================================================================
-#  MARKDOWN MÍNIMO  (solo lo que usan las fichas)
-# =============================================================================
-
-def _en_linea(t):
-    t = html.escape(t)
-    t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
-    # No-avaricioso y admitiendo '*' dentro: las fichas escriben cosas como
-    # "**3.4. Es *in vitro*.**", y con [^*]+ la negrita no se emparejaba y los
-    # asteriscos salían impresos. La cursiva de dentro la resuelve la regla
-    # siguiente, que corre después.
-    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
-    t = re.sub(r"(?<!\*)\*([^*\n]+)\*(?!\*)", r"<em>\1</em>", t)
-    t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', t)
-    t = re.sub(r"(?<![\"=>])(https?://\S+)", r'<a href="\1">\1</a>', t)
-    return t
-
-
-def markdown(texto):
-    """Convertidor mínimo: títulos, tablas, listas, citas, reglas y párrafos."""
-    salida, buffer_p, en_tabla = [], [], False
-
-    def cerrar_p():
-        if buffer_p:
-            # Se unen con espacio, NO con <br>: las fichas están escritas a 80
-            # columnas y con <br> la web heredaba los cortes del archivo fuente.
-            #
-            # OJO AL ORDEN: primero se JUNTA y después se formatea. Al revés
-            # (formatear línea a línea y luego juntar) una negrita que abre en
-            # una línea y cierra en la siguiente no se empareja nunca y los
-            # asteriscos salen impresos. Las 17 fichas del proyecto tienen ese
-            # caso, porque están escritas a 80 columnas.
-            salida.append("<p>" + _en_linea(" ".join(buffer_p)) + "</p>")
-            buffer_p.clear()
-
-    def cerrar_tabla():
-        nonlocal en_tabla
-        if en_tabla:
-            salida.append("</tbody></table></div>")
-            en_tabla = False
-
-    lineas = texto.split("\n")
-    i = 0
-    while i < len(lineas):
-        ln = lineas[i].rstrip()
-        if not ln.strip():
-            cerrar_p(); cerrar_tabla(); i += 1; continue
-        if re.match(r"^---+$", ln.strip()):
-            cerrar_p(); cerrar_tabla(); salida.append("<hr>"); i += 1; continue
-        m = re.match(r"^(#{1,6})\s+(.*)$", ln)
-        if m:
-            cerrar_p(); cerrar_tabla()
-            n = len(m.group(1)) + 1
-            salida.append(f"<h{min(n,6)}>{_en_linea(m.group(2))}</h{min(n,6)}>")
-            i += 1; continue
-        # tabla
-        if ln.lstrip().startswith("|") and i + 1 < len(lineas) \
-                and re.match(r"^\s*\|[\s:|-]+\|\s*$", lineas[i + 1]):
-            cerrar_p()
-            cabecera = [c.strip() for c in ln.strip().strip("|").split("|")]
-            salida.append('<div class="tabla-scroll"><table><thead><tr>'
-                          + "".join(f"<th>{_en_linea(c)}</th>" for c in cabecera)
-                          + "</tr></thead><tbody>")
-            en_tabla = True
-            i += 2
-            while i < len(lineas) and lineas[i].lstrip().startswith("|"):
-                cel = [c.strip() for c in lineas[i].strip().strip("|").split("|")]
-                salida.append("<tr>" + "".join(f"<td>{_en_linea(c)}</td>" for c in cel) + "</tr>")
-                i += 1
-            cerrar_tabla(); continue
-        if re.match(r"^\s*[-*]\s+", ln) or re.match(r"^\s*\d+\.\s+", ln):
-            cerrar_p(); cerrar_tabla()
-            ordenada = bool(re.match(r"^\s*\d+\.\s+", ln))
-            # Mismo criterio que en cerrar_p: se acumula el TEXTO CRUDO de cada
-            # ítem y se formatea una sola vez al cerrarlo. Un ítem partido en
-            # varias líneas con una negrita a caballo se emparejaba mal.
-            items = []
-            while i < len(lineas) and (re.match(r"^\s*[-*]\s+", lineas[i])
-                                       or re.match(r"^\s*\d+\.\s+", lineas[i])
-                                       # continuación del ítem: 2 espacios o
-                                       # más. Exigir 3 dejaba fuera la sangría
-                                       # de 2 que usan casi todas las fichas.
-                                       or re.match(r"^\s{2,}\S", lineas[i])):
-                if re.match(r"^\s*([-*]|\d+\.)\s+", lineas[i]):
-                    items.append(re.sub(r"^\s*([-*]|\d+\.)\s+", "", lineas[i]).strip())
-                elif items:
-                    items[-1] += " " + lineas[i].strip()
-                i += 1
-            salida.append("<ol>" if ordenada else "<ul>")
-            salida.extend(f"<li>{_en_linea(x)}</li>" for x in items)
-            salida.append("</ol>" if ordenada else "</ul>")
-            continue
-        if ln.lstrip().startswith(">"):
-            cerrar_p(); cerrar_tabla()
-            # Una cita de varias líneas es UNA cita, no una por línea, y se
-            # formatea entera para no partir las negritas.
-            cita = []
-            while i < len(lineas) and lineas[i].lstrip().startswith(">"):
-                cita.append(lineas[i].lstrip().lstrip(">").strip())
-                i += 1
-            salida.append("<blockquote>" + _en_linea(" ".join(cita).strip())
-                          + "</blockquote>")
-            continue
-        if ln.strip().startswith("<"):
-            cerrar_p(); i += 1; continue
-        buffer_p.append(ln.strip())
-        i += 1
-    cerrar_p(); cerrar_tabla()
-    return "\n".join(salida)
-
-
-# =============================================================================
-#  DATOS: todo sale de ejecutar el simulador, nada está escrito a mano
-# =============================================================================
+                     + FIGURAS_LIP_REALES + FIGURAS_LIP_TEORICOS)
 
 def recoger():
     u = dict(
@@ -900,18 +693,10 @@ details.liposoma .dataset50-figs{display:grid; grid-template-columns:repeat(3,1f
 details.liposoma .dataset50-figs .figura{margin:0}
 @media (max-width:900px){details.liposoma .dataset50-figs{grid-template-columns:1fr}}
 
-/* ---- listas ---- */
-.fuente{padding:.85rem 0; border-bottom:1px solid var(--linea)}
-.fuente:last-child{border-bottom:none}
-.fuente .aut{font-weight:600; font-size:.92rem}
-.fuente .tit{font-size:.92rem}
-.fuente a{font-size:.83rem; color:var(--azul); word-break:break-all}
-.fuente .uso{display:inline-block; font-size:.74rem; background:#eef2f7;
-  color:var(--suave); padding:.13rem .5rem; border-radius:999px; margin-top:.25rem}
-.prio{display:inline-block; font-size:.72rem; font-weight:700; padding:.14rem .5rem;
-  border-radius:999px; text-transform:uppercase; letter-spacing:.05em}
-.prio.alta{background:#fdecea; color:var(--rojo)}
-.prio.media{background:#fff4e0; color:var(--aviso)}
+/* ---- bibliografía ---- */
+ol.biblio{margin:1.2rem 0 0; padding-left:1.9rem; max-width:78ch}
+ol.biblio li{margin-bottom:.85rem; font-size:.93rem; line-height:1.55}
+ol.biblio a{font-size:.85rem; word-break:break-all}
 
 code{background:#eef1f5; padding:.1rem .35rem; border-radius:4px; font-size:.87em;
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
@@ -921,18 +706,9 @@ a{color:var(--azul)}
 footer{margin-top:3rem; padding:1.8rem 0 2.6rem; border-top:1px solid var(--linea);
   color:var(--suave); font-size:.85rem; background:var(--papel)}
 
-/* ---- fichas ---- */
-.ficha{background:var(--papel); border:1px solid var(--linea); border-radius:11px;
-  padding:1.8rem 2rem; margin:0 0 1.5rem}
-.ficha h2{font-size:1.2rem; margin-top:1.8rem} .ficha h2:first-child{margin-top:0}
-.ficha h3{font-size:1rem} .ficha h4{font-size:.95rem; margin:1.3rem 0 .4rem}
-.ficha blockquote{border-left:3px solid var(--linea); margin:1rem 0;
-  padding:.2rem 0 .2rem 1rem; color:var(--suave)}
-.volver{display:inline-block; margin:0 0 1.3rem; font-size:.9rem}
 
 @media (max-width:640px){
   header.principal h1{font-size:1.35rem} header.pagina h1{font-size:1.2rem}
-  .ficha{padding:1.2rem}
 }
 @media print{nav.barra{display:none} body{background:#fff} .figura{break-inside:avoid}}
 """
@@ -941,13 +717,8 @@ footer{margin-top:3rem; padding:1.8rem 0 2.6rem; border-top:1px solid var(--line
 PAGINAS = [
     ("index.html", "Resumen", "Cifras y resultados."),
     ("liposoma.html", "Liposoma", "Suelo geométrico y liposomas reales publicados."),
-    ("dendrimero.html", "Dendrímero", "Ventana G3-G10, carga y 6 figuras."),
-    ("polimero.html", "Polímero", "Suelo del glóbulo colapsado."),
-    ("metodo.html", "Método", "Veredictos, rutas y compuertas."),
-    ("validacion.html", "Validación", "Recuento contra la literatura."),
-    ("fichas.html", "Fichas", "Fuente primaria de cada resultado."),
-    ("pendientes.html", "Pendientes", "Lo que falta."),
-    ("fuentes.html", "Fuentes", "Bibliografía."),
+    ("bibliografia.html", "Bibliografía",
+     "Referencias citadas en el sitio, estilo Vancouver, en orden de aparición."),
 ]
 
 # Sub-páginas de cada clase de transportador. La página de la clase lleva SOLO
@@ -960,16 +731,6 @@ SUBPAGINAS = {
          "Formulaciones propuestas, sin ningún número medido."),
         ("dataset_50.html", "Dataset",
          "50 liposomas sintéticos, parámetros aleatorios dentro del rango real."),
-    ],
-    "dendrimero.html": [
-        ("dendrimero.html", "Reales", ""),
-        ("dendrimero_teoricos.html", "Teóricos",
-         "Dendrímeros del simulador de acople. Datos sintéticos."),
-    ],
-    "polimero.html": [
-        ("polimero.html", "Reales", ""),
-        ("polimero_teoricos.html", "Teóricos",
-         "Nanopartícula PLGA y dos micelas. Datos sintéticos."),
     ],
 }
 
@@ -992,41 +753,6 @@ def _etq(v):
     clase = {"EXCLUIDA": "no", "NO EXCLUIDA": "si", "NO EVALUABLE": "nn"}[v]
     texto = {"EXCLUIDA": "NO", "NO EXCLUIDA": "SÍ", "NO EVALUABLE": "??"}[v]
     return f'<span class="etq {clase}">{texto}</span>'
-
-
-def _figuras_html(lista, base=""):
-    trozos = []
-    for archivo, titulo, lectura in lista:
-        if not (AQUI / archivo).exists():
-            continue
-        trozos.append(
-            f'<figure class="figura"><img src="{base}img/{archivo}?v={_BUILD_TS}" '
-            f'alt="{html.escape(titulo)}" loading="lazy">'
-            f'<figcaption><b>{html.escape(titulo)}</b>'
-            f'<span>{html.escape(lectura)}</span></figcaption></figure>')
-    return "\n".join(trozos)
-
-
-def _bloques_figuras(comunes, propias=(), sin_comunes=""):
-    """Los dos bloques de figuras de una página de clase, siempre en este orden.
-
-    `sin_comunes` es el motivo que se imprime cuando el set común todavía no se
-    puede generar para esa página (falta el catálogo de diseños).
-    """
-    trozos = ["<h2>Figuras</h2>"]
-    if comunes:
-        trozos.append('<p class="rev">Set común: las mismas tres figuras en '
-                      'todas las clases.</p>')
-        trozos.append(_figuras_html(comunes))
-    elif sin_comunes:
-        trozos.append(f'<div class="aviso"><strong>Set común no disponible.'
-                      f'</strong> {sin_comunes}</div>')
-    if propias:
-        trozos.append("<h2>Específicas de esta clase</h2>")
-        trozos.append('<p class="rev">Solo existen para esta clase: no hay dato '
-                      'para replicarlas en las demás.</p>')
-        trozos.append(_figuras_html(propias))
-    return "\n".join(trozos)
 
 
 def envoltura(archivo, titulo, subtitulo, cuerpo, fecha, base="", portada=False):
@@ -1252,12 +978,6 @@ declarada.</p>
 <h2>Primera compuerta que falla</h2>
 {tabla_muere}
 
-<div class="aviso"><strong>Ruta B.</strong> Muselman 2026 (700 nm) era el único diseño
-no excluido del modelo. Desde el 2026-08-12 sale <b>no evaluable</b>: la compuerta B.3
-volvió a abrirse porque el tránsito del monocito al cerebro inflamado
-({R.T_TRANSITO_PRIMERA_DETECCION_h:.0f}–{R.T_TRANSITO_PICO_h:.0f} h, Tong 2016) se solapa
-con la descarga del liposoma (&gt; {R.T_LIBERACION_COTA_INFERIOR_h:.0f} h sin techo medido,
-Mao 2014).</div>
 
 <h2>Detalle por liposoma</h2>
 <p class="rev">Clic sobre cada fila para desplegar sus 3 figuras propias
@@ -1309,9 +1029,6 @@ def cuerpo_liposoma_teoricos(d):
     tabla_veredictos, tabla_muere = _tablas_catalogo(d["catalogo_teorico"],
                                                      d["rutas"])
     return f"""
-<div class="aviso"><strong>Diseños teóricos.</strong> Formulaciones propuestas:
-ni el Ø ni el ζ están medidos. Los liposomas publicados están en la pestaña
-<b>Reales</b>.</div>
 
 <h2>Veredictos</h2>
 {tabla_veredictos}
@@ -1321,26 +1038,8 @@ declarada.</p>
 <h2>Primera compuerta que falla</h2>
 {tabla_muere}
 
-<div class="aviso"><strong>Zona muerta 31–50 nm.</strong> Los tres: demasiado
-grandes para el glicocálix, demasiado pequeños para el macrófago.</div>
 
-<div class="aviso"><strong>Tensión de carga.</strong> ζ positivo hace falta para
-entrar (ruta C) e impide difundir (Nance 2012: nada con ζ &lt; −6 mV difunde;
-100 % de las carboxiladas inmovilizadas, incluidas las de 40 nm). Por el lado
-positivo el estorbo también está medido, pero más arriba: con ζ
-+{R.ZETA_ADHESIVO_POSITIVO_mV:.1f} mV difunde menos del 10 % de la población
-(Berry 2016) y con +35.3 mV la partícula queda inmovilizada (Mastorakos 2016),
-las dos por seguimiento de partículas en cerebro de rata <em>ex vivo</em>. Los
-tres diseños (+2.0, +5.0, +6.7 mV) caen en el hueco sin dato que va de 0 a
-+{R.ZETA_ADHESIVO_POSITIVO_mV:.0f} mV, así que su compuerta sigue
-DESCONOCIDA: no se extrapola.</div>
 
-<div class="aviso"><strong>Salvedad de esos dos datos.</strong> Berry y
-Mastorakos son polímero/ADN, no liposomas, y su ζ está medido en NaCl 10 mM a
-pH 7.0, no en aCSF. En aCSF las dos formulaciones catiónicas pierden la
-estabilidad coloidal, así que la inmovilización puede deberse a adhesión
-electrostática o a obstrucción estérica por agregación: los experimentos no
-separan las dos causas.</div>
 
 <h2>Detalle por liposoma</h2>
 <p class="rev">Clic sobre cada fila para desplegar sus 3 figuras propias
@@ -1430,303 +1129,53 @@ declarada.</p>
 """
 
 
-def cuerpo_dendrimero(d):
-    u, den = d["umbrales"], d["dendrimero"]
-    fd = "".join(
-        f'<tr><td><b>G{g["gen"]}</b></td><td class="num">{g["diametro"]:.2f}</td>'
-        f'<td>{_etq("NO EXCLUIDA") if g["estado"] == "PASA" else _etq("NO EVALUABLE")}</td>'
-        f'<td>{"sí" if g["glicocalix"] else "no"}</td>'
-        f'<td>{"sí" if g["envuelve"] else "no"}</td></tr>'
-        for g in den["generaciones"])
-    tabla = ('<div class="tabla-scroll"><table><thead><tr><th>Generación</th>'
-             '<th class="num">Ø medido (nm)</th><th>Fabricable</th>'
-             '<th>¿Pasa el glicocálix?</th><th>¿Se envuelve?</th></tr></thead>'
-             '<tbody>' + fd + '</tbody></table></div>')
+def cuerpo_bibliografia(d):
+    """BIBLIOGRAFÍA · VA A MANO, igual que FUENTES.
 
-    return f"""
-<h2>Ventana geométrica</h2>
-<div class="tarjetas">
-  <div class="tarjeta morado"><div class="rotulo">Suelo · G3</div>
-    <div class="cifra">{den['suelo']:.2f} nm</div>
-    <div class="pie">Ø medido y alojamiento del fármaco demostrado.</div></div>
-  <div class="tarjeta morado"><div class="rotulo">Techo · G10</div>
-    <div class="cifra">{den['techo']:.2f} nm</div>
-    <div class="pie">Última generación completable.</div></div>
-  <div class="tarjeta rojo"><div class="rotulo">Margen al envolvimiento</div>
-    <div class="cifra">{den['margen']:.2f} nm</div>
-    <div class="pie">Exige {u['envolvimiento']:.2f} nm. No lo alcanza.</div></div>
-</div>
-{tabla}
-<p class="rev">Ø medidos: Prosa 2001, Tabla 1 (SAXS en metanol, ±5 %).
-Techo: Maiti 2004, Tabla 4 y Figs. 21-22 · de Gennes &amp; Hervet 1983.
-Suelo: Devarakonda 2004, Tabla 2.</p>
+    Restaurada literal del último HTML publicado que la tenía
+    (commit 2efce14, `web/bibliografia.html`, generado el 2026-08-18). Se
+    recuperó tal cual: 22 referencias en estilo Vancouver, en orden de
+    aparición, con su numeración original intacta. NO se reconstruyó de
+    memoria ni se completó a ojo.
 
-<div class="aviso"><strong>Empate técnico.</strong> ±5 % sobre los
-{den['techo_medido']:.2f} nm de G10 da {den['techo_medido']*(1-den['precision']):.2f}–{den['techo_medido']*(1+den['precision']):.2f} nm,
-y {den['techo_medido']*(1+den['precision']):.2f} &gt; {u['envolvimiento']:.2f}.
-Medido en metanol, no en agua.</div>
+    NO confundir con `FUENTES`, que es otra lista y tiene más entradas: FUENTES
+    es el anclaje interno del código (una por compuerta, incluidos manuales de
+    coloides y fuentes que solo viven en comentarios) y es lo que vigila la
+    guarda de `main()`. Esta lista son las referencias CITADAS EN EL SITIO, que
+    son menos por definición. Que FUENTES tenga más entradas no es un hueco.
 
-<div class="aviso"><strong>Carga 1:1.</strong> Devarakonda 2004 (G0–G3): una
-molécula de fármaco por dendrímero. Sin dato para G4–G10 ni para fingolimod.</div>
-
-<div class="aviso"><strong>ζ.</strong> En el catálogo va como positivo sin valor:
-no hay ζ medido en fuente primaria para esta clase.</div>
-
-{_bloques_figuras(FIGURAS_DEND_REALES, FIGURAS_DENDRIMERO_PROPIAS)}
+    Verificado el 2026-08-22: las 4 páginas del sitio citan 14 apellido+año, y
+    las 14 tienen su entrada aquí.
+    """
+    return """<h2>Referencias</h2>
+<p class="rev">Las citas en el texto usan el número entre corchetes que corresponde a esta lista,
+p. ej. [5]. Cuando una nota cita más de una fuente aparecen varios números juntos, p. ej. [1,11]
+o [13-15].</p>
+<ol class="biblio">
+<li id="ref1" value="1">Mao Y, Wang J, Zhao Y, Wu Y, Kwak KJ, Chen CS, et al. A novel liposomal formulation of FTY720 (fingolimod) for promising enhanced targeted delivery. Nanomedicine. 2014;10(2):393-400. <a href="https://doi.org/10.1016/j.nano.2013.08.001" target="_blank" rel="noopener">doi:10.1016/j.nano.2013.08.001</a></li>
+<li id="ref2" value="2">Gong X, Fan X, He Y, Wang Y, Zhou F, Yang B. A pH-sensitive liposomal co-delivery of fingolimod and ammonia borane for treatment of intracerebral hemorrhage. Nanophotonics. 2022;11(22):5133-42. <a href="https://doi.org/10.1515/nanoph-2022-0496" target="_blank" rel="noopener">doi:10.1515/nanoph-2022-0496</a></li>
+<li id="ref3" value="3">Chow SF, et al. Rational development of fingolimod nano-embedded microparticles as nose-to-brain neuroprotective therapy for ischemic stroke. Drug Deliv Transl Res. 2025;15(6):2022-47. <a href="https://doi.org/10.1007/s13346-024-01721-8" target="_blank" rel="noopener">doi:10.1007/s13346-024-01721-8</a></li>
+<li id="ref4" value="4">Muselman A, Yu LW, Nguyen KD, Inayathullah M, Liu Q, Brewer KD, et al. Macrophage-targeted PEGylated liposomes ameliorate experimental autoimmune encephalomyelitis. Front Immunol. 2026;16:1657131. <a href="https://doi.org/10.3389/fimmu.2025.1657131" target="_blank" rel="noopener">doi:10.3389/fimmu.2025.1657131</a></li>
+<li id="ref5" value="5">Pan J, Tristram-Nagle S, Kučerka N, Nagle JF. Temperature dependence of structure, bending rigidity, and bilayer interactions of DOPC bilayers. Phys Rev Lett. 2008;100:198103. <a href="https://doi.org/10.1103/PhysRevLett.100.198103" target="_blank" rel="noopener">doi:10.1103/PhysRevLett.100.198103</a></li>
+<li id="ref6" value="6">Weinbaum S, Zhang X, Han Y, Vink H, Cowin SC. Mechanotransduction and flow across the endothelial glycocalyx. Proc Natl Acad Sci U S A. 2003;100(13):7988-95. <a href="https://doi.org/10.1073/pnas.1332808100" target="_blank" rel="noopener">doi:10.1073/pnas.1332808100</a></li>
+<li id="ref7" value="7">Deserno M. Elastic deformation of a fluid membrane upon colloid binding. Phys Rev E. 2004;69:031903. <a href="https://doi.org/10.1103/PhysRevE.69.031903" target="_blank" rel="noopener">doi:10.1103/PhysRevE.69.031903</a></li>
+<li id="ref8" value="8">Bastiani M, Parton RG. Caveolae at a glance. J Cell Sci. 2010;123(22):3831-6. <a href="https://doi.org/10.1242/jcs.070102" target="_blank" rel="noopener">doi:10.1242/jcs.070102</a></li>
+<li id="ref9" value="9">Berry S, Mastorakos P, Zhang C, Song E, Patel H, Suk JS, et al. Enhancing intracranial delivery of clinically relevant non-viral gene vectors. RSC Adv. 2016;6:41665-74. <a href="https://doi.org/10.1039/c6ra01546h" target="_blank" rel="noopener">doi:10.1039/c6ra01546h</a></li>
+<li id="ref10" value="10">Mastorakos P, Song E, Zhang C, Berry S, Park HW, Kim YE, et al. Biodegradable DNA nanoparticles that provide widespread gene delivery in the brain. Small. 2016;12(5):678-85. <a href="https://doi.org/10.1002/smll.201502554" target="_blank" rel="noopener">doi:10.1002/smll.201502554</a></li>
+<li id="ref11" value="11">Tong H-I, Kang W, Davy PMC, Shi Y, Sun S, Allsopp RC, et al. Monocyte trafficking, engraftment, and delivery of nanoparticles and an exogenous gene into the acutely inflamed brain tissue. PLoS One. 2016;11(4):e0154022. <a href="https://doi.org/10.1371/journal.pone.0154022" target="_blank" rel="noopener">doi:10.1371/journal.pone.0154022</a></li>
+<li id="ref12" value="12">Hisano Y, Kobayashi N, Kawahara A, Yamaguchi A, Nishi T. The sphingosine 1-phosphate transporter, SPNS2, functions as a transporter of the phosphorylated form of the immunomodulating agent FTY720. J Biol Chem. 2011;286(3):1758-66. <a href="https://doi.org/10.1074/jbc.M110.171116" target="_blank" rel="noopener">doi:10.1074/jbc.M110.171116</a></li>
+<li id="ref13" value="13">Foster CA, Howard LM, Schweitzer A, Persohn E, Hiestand PC, Balatoni B, et al. Brain penetration of the oral immunomodulatory drug FTY720 and its phosphorylation in the central nervous system during experimental autoimmune encephalomyelitis: consequences for mode of action in multiple sclerosis. J Pharmacol Exp Ther. 2007;323(2):469-75. <a href="https://doi.org/10.1124/jpet.107.127183" target="_blank" rel="noopener">doi:10.1124/jpet.107.127183</a></li>
+<li id="ref14" value="14">Bucki R, Kulakowska A, Byfield FJ, Zendzian-Piotrowska M, Baranowski M, Marzec M, et al. Plasma gelsolin modulates cellular response to sphingosine 1-phosphate. Am J Physiol Cell Physiol. 2010;299(6):C1516-23. <a href="https://doi.org/10.1152/ajpcell.00051.2010" target="_blank" rel="noopener">doi:10.1152/ajpcell.00051.2010</a></li>
+<li id="ref15" value="15">Mishima Y, Kurano M, Kobayashi T, Nishikawa M, Ohkawa R, Tozuka M, et al. Dihydro-sphingosine 1-phosphate interacts with carrier proteins in a manner distinct from that of sphingosine 1-phosphate. Biosci Rep. 2018;38(5):BSR20181288. <a href="https://doi.org/10.1042/BSR20181288" target="_blank" rel="noopener">doi:10.1042/BSR20181288</a></li>
+<li id="ref16" value="16">Nance EA, Woodworth GF, Sailor KA, Shih TY, Xu Q, Swaminathan G, et al. A dense poly(ethylene glycol) coating improves penetration of large polymeric nanoparticles within brain tissue. Sci Transl Med. 2012;4(149):149ra119. <a href="https://doi.org/10.1126/scitranslmed.3003594" target="_blank" rel="noopener">doi:10.1126/scitranslmed.3003594</a></li>
+<li id="ref17" value="17">Lockman PR, Koziara JM, Mumper RJ, Allen DD. Nanoparticle surface charges alter blood-brain barrier integrity and permeability. J Drug Target. 2004;12(9-10):635-41. <a href="https://doi.org/10.1080/10611860400015936" target="_blank" rel="noopener">doi:10.1080/10611860400015936</a></li>
+<li id="ref18" value="18">Gromnicova R, Kaya M, Romero IA, Williams P, Satchell S, Sharrack B, et al. Transport of gold nanoparticles by vascular endothelium from different human tissues. PLoS One. 2016;11(8):e0161610. <a href="https://doi.org/10.1371/journal.pone.0161610" target="_blank" rel="noopener">doi:10.1371/journal.pone.0161610</a></li>
+<li id="ref19" value="19">Mouzoura P, Marazioti A, Gkartziou F, Metsiou D-N, Antimisiaris SG. Potential of liposomal FTY720 for bone regeneration: proliferative, osteoinductive, chemoattractive, and angiogenic properties compared to free bioactive lipid. Int J Nanomedicine. 2025;20:239-65. <a href="https://doi.org/10.2147/IJN.S494512" target="_blank" rel="noopener">doi:10.2147/IJN.S494512</a></li>
+<li id="ref20" value="20">Cheng MJ, Kumar R, Sridhar S, Webster TJ, Ebong EE. Endothelial glycocalyx conditions influence nanoparticle uptake for passive targeting. Int J Nanomedicine. 2016;11:3305-15. <a href="https://doi.org/10.2147/IJN.S106299" target="_blank" rel="noopener">doi:10.2147/IJN.S106299</a></li>
+<li id="ref21" value="21">Shi SM, Suh RJ, Shon DJ, Garcia FJ, Buff JK, Atkins M, et al. Glycocalyx dysregulation impairs blood-brain barrier in ageing and disease. Nature. 2025;639:985-94. <a href="https://doi.org/10.1038/s41586-025-08589-9" target="_blank" rel="noopener">doi:10.1038/s41586-025-08589-9</a></li>
+<li id="ref22" value="22">Larsen R, Kucharz K, Aydin S, Micael MKB, Choudhury B, Paulchakrabarti M, et al. Multi-omic analysis reveals the unique glycan landscape of the blood-brain barrier glycocalyx [preprint]. bioRxiv. 2025:2025.04.07.645297. <a href="https://doi.org/10.1101/2025.04.07.645297" target="_blank" rel="noopener">doi:10.1101/2025.04.07.645297</a></li>
+</ol>
 """
-
-
-def _tablas_teoricos(filas_teoricos, con_clase=False):
-    """Tabla de veredictos + desglose «dónde choca cada uno», para cualquier
-    catálogo de transportadores teóricos."""
-    def _e(estado):
-        v = {"PASA": "NO EXCLUIDA", "FALLA": "EXCLUIDA",
-             "DESCONOCIDA": "NO EVALUABLE"}[estado]
-        return _etq(v)
-
-    filas = []
-    for t in filas_teoricos:
-        celdas = "".join(f"<td>{_e(p['estado'])}</td>" for p in t["puertas"])
-        col_clase = (f'<td>{html.escape(t["clase"])}</td>' if con_clase else "")
-        filas.append(
-            f'<tr><td><b>{html.escape(t["nombre"])}</b></td>'
-            f'<td class="num">{t["diametro"]:.2f}</td>'
-            f'<td class="num">{t["zeta"]:+.1f}</td>{col_clase}{celdas}</tr>')
-    cab_clase = "<th>Clase</th>" if con_clase else ""
-    tabla = ('<div class="tabla-scroll"><table><thead><tr><th>Transportador</th>'
-             '<th class="num">Ø (nm)</th><th class="num">ζ (mV)</th>'
-             f'{cab_clase}'
-             '<th>Fabricable</th><th>Glicocálix</th><th>Envolvimiento</th>'
-             '</tr></thead><tbody>' + "".join(filas) + '</tbody></table></div>')
-
-    porque = []
-    for t in filas_teoricos:
-        lineas = "".join(
-            f'<li><b>{html.escape(p["nombre"])}</b> · {p["estado"]}'
-            + (f' ({p["valor"]:g} vs {p["umbral"]:.2f} nm)'
-               if p["valor"] is not None and p["umbral"] is not None else "")
-            + (f'<br><span class="rev">{html.escape(p["motivo"])}</span>'
-               if p["motivo"] else "")
-            + (f'<br><span class="rev">Salvedad: '
-               f'{html.escape(p.get("advertencia") or "")}</span>'
-               if p.get("advertencia") else "")
-            + '</li>'
-            for p in t["puertas"])
-        porque.append(f'<h3>{html.escape(t["nombre"])}</h3><ul>{lineas}</ul>')
-    return tabla, "".join(porque)
-
-
-def cuerpo_dendrimero_teoricos(d):
-    tabla, porque = _tablas_teoricos(d["teoricos"])
-    return f"""
-<div class="aviso"><strong>Datos sintéticos.</strong> Los valores de estas tres
-fichas son inventados dentro de un rango teórico plausible. No son medidas, no
-cierran ninguna tarea de verificación y no pueden citarse como resultado.</div>
-
-{tabla}
-
-<h2>Dónde choca cada uno</h2>
-{porque}
-
-<div class="aviso"><strong>ζ.</strong> Ninguno de los tres entra en el modelo:
-sigue sin haber ζ medido en fuente primaria para esta clase.</div>
-
-<div class="aviso"><strong>PPI y carbosilano.</strong> La ventana suelo/techo del
-código está derivada solo de PAMAM, así que otra química devuelve DESCONOCIDA en
-lugar de heredarla. Tarea G.1a-bis.</div>
-
-<div class="aviso"><strong>El acople no ordena los tres.</strong> ΔG =
-−2.303·k<sub>B</sub>T·logP depende solo del logP del fármaco (4.16), así que vale
-−9.58 k<sub>B</sub>T en los tres. Las fracciones acopladas que da el simulador de
-acople son fracción de volumen de la caja, no una propiedad del transportador.</div>
-
-{_bloques_figuras(FIGURAS_DEND_TEORICOS, FIGURAS_DENDRIMERO_TEORICOS_PROPIAS)}
-"""
-
-
-# Las tres figuras del set común se dibujan sobre un CATÁLOGO de diseños, y para
-# el polímero todavía no hay ninguno: haría falta ζ, y no hay ζ de polímero
-# medido en fuente primaria. Inventarlo rompería la regla del proyecto.
-_SIN_CATALOGO_POLIMERO = (
-    "las tres figuras del set común se dibujan sobre un catálogo de diseños y "
-    "todavía no hay ninguno de esta clase. Cada diseño necesita Ø, ζ y masa "
-    "molar; el ζ del polímero no está medido en fuente primaria y no se "
-    "inventa.")
-
-
-def cuerpo_polimero_teoricos(d):
-    tabla, porque = _tablas_teoricos(d["teoricos_polimero"], con_clase=True)
-    notas = "".join(
-        f'<li><b>{html.escape(t["nombre"])}</b> · '
-        f'{html.escape(t["nota"].replace("DATO SINTÉTICO · ", ""))}</li>'
-        for t in d["teoricos_polimero"])
-    return f"""
-<div class="aviso"><strong>Datos sintéticos.</strong> Los valores de estas tres
-fichas son inventados dentro de un rango teórico plausible. No son medidas, no
-cierran ninguna tarea de verificación y no pueden citarse como resultado.</div>
-
-<div class="aviso"><strong>Dos de las tres son micelas, no polímero macizo.</strong>
-Una micela está hecha de polímero pero es un agregado autoensamblado de núcleo y
-corona, con concentración micelar crítica por debajo de la cual se deshace. Su
-suelo no es el glóbulo de una cadena colapsada sino el que fijan el número de
-agregación y la carga de fármaco, así que usa su propia compuerta.</div>
-
-{tabla}
-<ul class="rev">{notas}</ul>
-
-<h2>Dónde choca cada uno</h2>
-{porque}
-
-<div class="aviso"><strong>Suelo de la micela: {d['micela_suelo_nm']:.1f} nm</strong>
-(Sochor 2020, SANS, micela cargada 10/1). Vacía mide {d['micela_vacia_nm']:.1f} nm:
-el fármaco no es un pasajero, multiplica el diámetro por 3.6. Por debajo del suelo
-la compuerta devuelve DESCONOCIDA, no FALLA, porque el dato viene de otro polímero
-y otro fármaco.</div>
-
-<div class="aviso"><strong>Mw del PLGA: {d['plga_mw_kDa']:.1f} kDa, DERIVADA.</strong>
-La ficha no la declara. Sale de sus propios datos (462 monómeros por cadena)
-suponiendo razón 85:15, la única con densidad medida. La razón casi no importa:
-con 50:50 el suelo pasa de 4.42 a 4.31 nm y ningún veredicto cambia.</div>
-
-<div class="aviso"><strong>ζ.</strong> Ninguno de los tres entra en el modelo:
-sigue sin haber ζ medido en fuente primaria para estas clases.</div>
-
-{_bloques_figuras(FIGURAS_POL_TEORICOS, FIGURAS_POLIMERO_TEORICOS_PROPIAS)}
-"""
-
-
-def cuerpo_polimero(d):
-    u, pol = d["umbrales"], d["polimero"]
-    fs = "".join(
-        f'<tr><td><b>{html.escape(e)}</b></td><td class="num">{mw}</td>'
-        f'<td class="num">{rho:.2f}</td><td class="num"><b>{dd:.2f}</b></td>'
-        f'<td>{"sí" if dd <= u["glicocalix"] else "no"}</td></tr>'
-        for e, mw, rho, dd in pol["suelos"])
-    tabla_suelos = (
-        '<div class="tabla-scroll"><table><thead><tr><th>Polímero</th>'
-        '<th class="num">Mw (kDa)</th><th class="num">ρ (g/cm³)</th>'
-        '<th class="num">Suelo (nm)</th><th>¿Pasa el glicocálix?</th>'
-        '</tr></thead><tbody>' + fs + '</tbody></table></div>')
-
-    base = pol["sensibilidad"][0][1]
-    fsen = "".join(
-        f'<tr><td>{"solo la cadena" if n == 0 else f"+ {n} molécula(s) de fingolimod"}</td>'
-        f'<td class="num">{dd:.4f}</td>'
-        f'<td class="num">{"—" if n == 0 else f"{100*(dd/base-1):+.2f} %"}</td></tr>'
-        for n, dd in pol["sensibilidad"])
-    tabla_sen = ('<div class="tabla-scroll"><table><thead><tr><th>Contenido</th>'
-                 '<th class="num">d (nm)</th><th class="num">cambio</th>'
-                 '</tr></thead><tbody>' + fsen + '</tbody></table></div>')
-
-    return f"""
-<h2>Polímero macizo: suelo del glóbulo colapsado</h2>
-<p class="formula"><code>V = M / (ρ · N_A)</code> &nbsp;·&nbsp;
-<code>d = (6V / π)^(1/3)</code></p>
-<p class="rev">Una partícula maciza no puede ser más pequeña que una sola cadena
-del polímero colapsada sobre sí misma. Sin techo arquitectónico.</p>
-{tabla_suelos}
-<p class="rev">Densidades: Parker et al. 2010, Biomed Mater 5:055004, Tabla 2
-(derivadas por los autores de su propia velocidad del sonido e impedancia).
-La Tabla 1 del mismo artículo da densidades del fabricante y no se usa.</p>
-
-<h3>El fármaco casi no mueve el suelo</h3>
-{tabla_sen}
-<p class="rev">Sobre PLGA de 53 kDa. Comprobado, no supuesto: por eso el suelo se
-calcula solo con la cadena y no arrastra el tamaño del fingolimod, que hasta el
-2026-08-13 no tenía
-fuente.</p>
-
-{_bloques_figuras([], FIGURAS_POLIMERO, sin_comunes=_SIN_CATALOGO_POLIMERO)}
-"""
-
-
-def cuerpo_metodo(d):
-    fc = "".join(
-        f'<tr><td><b>{html.escape(c["nombre"])}</b></td>'
-        + (f'<td>{html.escape(c["fuente"][:150])}{"…" if len(c["fuente"]) > 150 else ""}</td>'
-           if c["fuente"] != "—" else '<td><i>sin fuente primaria verificada</i></td>')
-        + f'<td>{html.escape(c["motivo"][:120])}{"…" if len(c["motivo"]) > 120 else ""}</td></tr>'
-        for c in d["compuertas"])
-    tabla = ('<div class="tabla-scroll"><table><thead><tr><th>Compuerta</th>'
-             '<th>Anclaje</th><th>Observación</th></tr></thead><tbody>'
-             + fc + '</tbody></table></div>')
-    rutas = "".join(f'<li>{html.escape(n)}</li>' for n in d["rutas"])
-
-    return f"""
-<h2>Qué significa cada veredicto</h2>
-<div class="tarjetas">
-  <div class="tarjeta rojo"><div class="rotulo">EXCLUIDA</div>
-    <div class="cifra" style="font-size:1.05rem">Afirmación fuerte</div>
-    <div class="pie">No puede usar esa ruta.</div></div>
-  <div class="tarjeta verde"><div class="rotulo">NO EXCLUIDA</div>
-    <div class="cifra" style="font-size:1.05rem">Afirmación débil</div>
-    <div class="pie">Candidato. No es predicción de éxito.</div></div>
-  <div class="tarjeta"><div class="rotulo">NO EVALUABLE</div>
-    <div class="cifra" style="font-size:1.05rem">Falta información</div>
-    <div class="pie">Sin dato no se da por superada.</div></div>
-</div>
-
-<div class="aviso"><strong>Techo estructural.</strong> La transcitosis es
-transporte activo dependiente de ATP: fuera del alcance de un modelo de
-equilibrio, devuelve «sin dato» siempre. Está en las rutas A, C y D, así que esas
-tres nunca pueden salir «no excluida».</div>
-
-<h2>Rutas</h2>
-<ul>{rutas}</ul>
-
-<h2>Compuertas</h2>
-{tabla}
-
-<h2>Clases evaluables</h2>
-<div class="tabla-scroll"><table><tbody>
-<tr><td>Liposoma</td><td><span class="etq si">sí</span></td></tr>
-<tr><td>Dendrímero</td><td><span class="etq si">sí</span></td></tr>
-<tr><td>Polímero macizo</td><td><span class="etq si">sí</span></td></tr>
-<tr><td>Micela</td><td><span class="etq nn">fuera de alcance</span></td></tr>
-</tbody></table></div>
-"""
-
-
-def cuerpo_validacion(d):
-    fv = "".join(f'<tr><td>{html.escape(k)}</td><td class="num"><b>{v}</b></td></tr>'
-                 for k, v in VALIDACION["conteo"])
-    return f"""
-<h2>Recuento a {VALIDACION['fecha']}</h2>
-<div class="tabla-scroll"><table><thead><tr><th>Categoría</th>
-<th class="num">Casos</th></tr></thead><tbody>{fv}</tbody></table></div>
-<p>{html.escape(VALIDACION['veredicto'])}</p>
-<p class="rev">Fuente: <code>{VALIDACION['fuente']}</code> ·
-<a href="fichas/resultados_validacion.html">detalle caso por caso</a> ·
-<a href="fichas/protocolo_validacion.html">protocolo</a></p>
-"""
-
-
-def cuerpo_fichas(d):
-    lfi = "".join(
-        f'<div class="fuente"><div class="aut">'
-        f'<a href="fichas/{Path(f).stem}.html">{html.escape(t)}</a></div>'
-        f'<div class="rev">{html.escape(f)}</div></div>'
-        for f, t in FICHAS if (RAIZ / "verificacion" / f).exists())
-    return f"""<h2>Fichas de verificación</h2>{lfi}"""
-
-
-def cuerpo_pendientes(d):
-    lp = "".join(
-        f'<div class="fuente"><span class="prio {p}">{p}</span> '
-        f'<span class="aut">{html.escape(t)}</span>'
-        f'<div class="tit">{html.escape(x)}</div></div>'
-        for t, p, x in PENDIENTES)
-    return f"""<h2>Pendientes</h2>{lp}"""
-
-
-def cuerpo_fuentes(d):
-    lf = "".join(
-        f'<div class="fuente"><div class="aut">{html.escape(a)}</div>'
-        f'<div class="tit">{html.escape(t)}</div>'
-        f'<div class="rev">{html.escape(r)}</div>'
-        f'<a href="{u_}">{u_}</a><br><span class="uso">{html.escape(uso)}</span></div>'
-        for a, t, r, u_, uso in FUENTES)
-    return f"""<h2>Fuentes</h2>{lf}"""
 
 
 CUERPOS = {
@@ -1734,23 +1183,8 @@ CUERPOS = {
     "liposoma.html": cuerpo_liposoma,
     "liposoma_teoricos.html": cuerpo_liposoma_teoricos,
     "dataset_50.html": cuerpo_dataset_50,
-    "dendrimero.html": cuerpo_dendrimero,
-    "dendrimero_teoricos.html": cuerpo_dendrimero_teoricos,
-    "polimero.html": cuerpo_polimero,
-    "polimero_teoricos.html": cuerpo_polimero_teoricos,
-    "metodo.html": cuerpo_metodo,
-    "validacion.html": cuerpo_validacion,
-    "fichas.html": cuerpo_fichas,
-    "pendientes.html": cuerpo_pendientes,
-    "fuentes.html": cuerpo_fuentes,
+    "bibliografia.html": cuerpo_bibliografia,
 }
-
-
-def construir_ficha(md_path, titulo, fecha):
-    cuerpo = ('<a class="volver" href="../fichas.html">← volver al índice de fichas</a>'
-              f'<div class="ficha">{markdown(md_path.read_text(encoding="utf-8"))}</div>'
-              '<a class="volver" href="../fichas.html">← volver al índice de fichas</a>')
-    return envoltura("fichas.html", titulo, md_path.name, cuerpo, fecha, base="../")
 
 
 # =============================================================================
@@ -1833,7 +1267,6 @@ def main():
         raise SystemExit(5)
 
     (SALIDA / "img").mkdir(parents=True, exist_ok=True)
-    (SALIDA / "fichas").mkdir(parents=True, exist_ok=True)
 
     # GUARDA CONTRA FIGURAS VIEJAS. Este script calcula los NÚMEROS ejecutando
     # el simulador, pero las figuras son PNG en disco y solo las copia. Hasta el
@@ -1878,17 +1311,7 @@ def main():
             encoding="utf-8")
         print(f"    web/{archivo:20s} {titulo}")
 
-    n_fichas = 0
-    for archivo, titulo in FICHAS:
-        p = RAIZ / "verificacion" / archivo
-        if not p.exists():
-            continue
-        (SALIDA / "fichas" / f"{p.stem}.html").write_text(
-            construir_ficha(p, titulo, fecha), encoding="utf-8")
-        n_fichas += 1
-
     print(f"\n  web/estilo.css         hoja de estilo, sin dependencias externas")
-    print(f"  web/fichas/            {n_fichas} fichas en HTML")
     print(f"  web/img/               {copiadas} figuras copiadas")
     if faltan:
         print("\n  FALTAN figuras (regenéralas con 'sh correr.sh todo' y "
