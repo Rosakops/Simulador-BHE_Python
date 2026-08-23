@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dendrímero · Teóricos · JC155 · SENACYT</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="pagina"><div class="envoltorio">
+  <p class="expediente">JC155 · SENACYT</p>
+  <h1>Dendrímero · Teóricos</h1>
+  <p class="sub">Dendrímeros del simulador de acople. Datos sintéticos.</p>
+</div></header>
+<nav class="barra"><ul><li><a href="index.html">Resumen</a></li><li><a href="liposoma.html">Liposoma</a></li><li><a href="dendrimero.html" class="activo">Dendrímero</a></li><li><a href="polimero.html">Polímero</a></li><li><a href="metodo.html">Método</a></li><li><a href="validacion.html">Validación</a></li><li><a href="fichas.html">Fichas</a></li><li><a href="pendientes.html">Pendientes</a></li><li><a href="fuentes.html">Fuentes</a></li></ul></nav>
+<nav class="subbarra"><div class="envoltorio"><a href="dendrimero.html">Reales</a><a href="dendrimero_teoricos.html" class="activo">Teóricos</a></div></nav>
+<main><div class="envoltorio">
+
+<div class="aviso"><strong>Datos sintéticos.</strong> Los valores de estas tres
+fichas son inventados dentro de un rango teórico plausible. No son medidas, no
+cierran ninguna tarea de verificación y no pueden citarse como resultado.</div>
+
+<div class="tabla-scroll"><table><thead><tr><th>Transportador</th><th class="num">Ø (nm)</th><th class="num">ζ (mV)</th><th>Fabricable</th><th>Glicocálix</th><th>Envolvimiento</th></tr></thead><tbody><tr><td><b>PAMAM G4 (ficha)</b></td><td class="num">15.00</td><td class="num">+9.9</td><td><span class="etq no">NO</span></td><td><span class="etq nn">??</span></td><td><span class="etq si">SÍ</span></td></tr><tr><td><b>PPI G4 (ficha)</b></td><td class="num">4.60</td><td class="num">+7.0</td><td><span class="etq nn">??</span></td><td><span class="etq si">SÍ</span></td><td><span class="etq no">NO</span></td></tr><tr><td><b>Carbosilano G2</b></td><td class="num">2.63</td><td class="num">+0.3</td><td><span class="etq nn">??</span></td><td><span class="etq si">SÍ</span></td><td><span class="etq no">NO</span></td></tr></tbody></table></div>
+
+<h2>Dónde choca cada uno</h2>
+<h3>PAMAM G4 (ficha)</h3><ul><li><b>Transportador fabricable</b> — FALLA (15 vs 14.16 nm)<br><span class="rev">por encima de G10, la última generación completable: la tensión estérica impide el crecimiento</span></li><li><b>Tamiz del glicocálix</b> — DESCONOCIDA (15 vs 9.00 nm)<br><span class="rev">15.0nm supera el poro geométrico (9.00nm, Weinbaum 2003), pero Lockman 2004 (in situ, BHE nativa) y Gromnicova 2016 (hCMEC/D3) muestran cruce real medible por encima de ese tamaño — el poro no es excluyente por sí solo a esta escala</span></li><li><b>Envolvimiento de membrana</b> — PASA (15 vs 14.49 nm)</li></ul><h3>PPI G4 (ficha)</h3><ul><li><b>Transportador fabricable</b> — DESCONOCIDA<br><span class="rev">dendrímero de PPI: la ventana suelo/techo del código está derivada solo de PAMAM (Prosa 2001, Maiti 2004) y no hay fuente primaria del límite geométrico de esta química por generación  [tarea G.1a-bis]</span></li><li><b>Tamiz del glicocálix</b> — PASA (4.6 vs 9.00 nm)</li><li><b>Envolvimiento de membrana</b> — FALLA (4.6 vs 16.88 nm)</li></ul><h3>Carbosilano G2</h3><ul><li><b>Transportador fabricable</b> — DESCONOCIDA<br><span class="rev">dendrímero de CARBOSILANO: la ventana suelo/techo del código está derivada solo de PAMAM (Prosa 2001, Maiti 2004) y no hay fuente primaria del límite geométrico de esta química por generación  [tarea G.1a-bis]</span></li><li><b>Tamiz del glicocálix</b> — PASA (2.63 vs 9.00 nm)</li><li><b>Envolvimiento de membrana</b> — FALLA (2.63 vs 21.84 nm)</li></ul>
+
+<div class="aviso"><strong>ζ.</strong> Ninguno de los tres entra en el modelo:
+sigue sin haber ζ medido en fuente primaria para esta clase.</div>
+
+<div class="aviso"><strong>PPI y carbosilano.</strong> La ventana suelo/techo del
+código está derivada solo de PAMAM, así que otra química devuelve DESCONOCIDA en
+lugar de heredarla. Tarea G.1a-bis.</div>
+
+<div class="aviso"><strong>El acople no ordena los tres.</strong> ΔG =
+−2.303·k<sub>B</sub>T·logP depende solo del logP del fármaco (4.16), así que vale
+−9.58 k<sub>B</sub>T en los tres. Las fracciones acopladas que da el simulador de
+acople son fracción de volumen de la caja, no una propiedad del transportador.</div>
+
+<h2>Figuras</h2>
+<p class="rev">Set común: las mismas tres figuras en todas las clases.</p>
+<figure class="figura"><img src="img/dend_teoricos_ventanas.png?v=20260822182252" alt="Ventanas de tamaño · solo las compuertas que dependen del diámetro" loading="lazy"><figcaption><b>Ventanas de tamaño · solo las compuertas que dependen del diámetro</b><span>Barra = rango permitido. Línea vertical = diseño evaluado. NO es un veredicto: las compuertas que no dependen del tamaño no salen aquí, así que una línea en verde en todas las barras de una ruta no significa que la supere. El veredicto está en la matriz.</span></figcaption></figure>
+<figure class="figura"><img src="img/dend_teoricos_matriz.png?v=20260822182252" alt="Diseño por ruta" loading="lazy"><figcaption><b>Diseño por ruta</b><span>! = compuerta que pasa con salvedad.</span></figcaption></figure>
+<figure class="figura"><img src="img/dend_teoricos_recorrido.png?v=20260822182252" alt="Compuerta a compuerta" loading="lazy"><figcaption><b>Compuerta a compuerta</b><span>Verde pasa · rojo falla · gris sin dato · hueco = salvedad.</span></figcaption></figure>
+<h2>Específicas de esta clase</h2>
+<p class="rev">Solo existen para esta clase: no hay dato para replicarlas en las demás.</p>
+<figure class="figura"><img src="img/dendrimeros_teoricos.png?v=20260822182252" alt="Los tres sobre la ventana geométrica" loading="lazy"><figcaption><b>Los tres sobre la ventana geométrica</b><span>Verde pasa · rojo falla · gris sin dato para esa química.</span></figcaption></figure>
+<figure class="figura"><img src="img/dend_teoricos_vs_medidos.png?v=20260822182252" alt="Fichas frente a las generaciones medidas" loading="lazy"><figcaption><b>Fichas frente a las generaciones medidas</b><span>El Ø de la ficha del PAMAM G4 cae por encima del G10, no donde el G4.</span></figcaption></figure>
+<figure class="figura"><img src="img/dend_teoricos_pmf.png?v=20260822182252" alt="El modelo de acople de las fichas" loading="lazy"><figcaption><b>El modelo de acople de las fichas</b><span>El pozo depende solo del logP del fármaco; la barrera de superficie, del ζ.</span></figcaption></figure>
+
+</div></main>
+<footer><div class="envoltorio">
+  <p>JC155 · SENACYT · documento interno · resultados
+  preliminares, no publicados.</p>
+  <p>Generado el 2026-08-22 · <code>sh correr.sh web</code></p>
+</div></footer>
+</body></html>
