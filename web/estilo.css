@@ -121,7 +121,11 @@ details.liposoma .dataset50-figs{display:grid; grid-template-columns:repeat(3,1f
 details.liposoma .dataset50-figs .figura{margin:0}
 @media (max-width:900px){details.liposoma .dataset50-figs{grid-template-columns:1fr}}
 
-/* ---- bibliografía ---- */
+/* ---- citas y bibliografía ---- */
+a.cita{text-decoration:none; font-weight:600; white-space:nowrap}
+a.cita:hover{text-decoration:underline}
+ol.biblio li:target{background:#fff8ec; border-radius:5px;
+  box-shadow:0 0 0 .5rem #fff8ec}
 ol.biblio{margin:1.2rem 0 0; padding-left:1.9rem; max-width:78ch}
 ol.biblio li{margin-bottom:.85rem; font-size:.93rem; line-height:1.55}
 ol.biblio a{font-size:.85rem; word-break:break-all}

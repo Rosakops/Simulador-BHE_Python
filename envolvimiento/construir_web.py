@@ -693,7 +693,11 @@ details.liposoma .dataset50-figs{display:grid; grid-template-columns:repeat(3,1f
 details.liposoma .dataset50-figs .figura{margin:0}
 @media (max-width:900px){details.liposoma .dataset50-figs{grid-template-columns:1fr}}
 
-/* ---- bibliografía ---- */
+/* ---- citas y bibliografía ---- */
+a.cita{text-decoration:none; font-weight:600; white-space:nowrap}
+a.cita:hover{text-decoration:underline}
+ol.biblio li:target{background:#fff8ec; border-radius:5px;
+  box-shadow:0 0 0 .5rem #fff8ec}
 ol.biblio{margin:1.2rem 0 0; padding-left:1.9rem; max-width:78ch}
 ol.biblio li{margin-bottom:.85rem; font-size:.93rem; line-height:1.55}
 ol.biblio a{font-size:.85rem; word-break:break-all}
@@ -747,6 +751,103 @@ _NOMBRE_PAGINA = {a: n for a, n, _ in PAGINAS}
 SUBPAGINAS_EXTRA = [(a, f"{_NOMBRE_PAGINA[clase]} · {e}", s)
                     for clase, subs in SUBPAGINAS.items()
                     for a, e, s in subs if a != clase]
+
+
+# =============================================================================
+#  CITAS VANCOUVER  ·  MANTENIDO A MANO junto a cuerpo_bibliografia()
+# =============================================================================
+#  El sitio cita con número entre corchetes, como anuncia la propia página de
+#  bibliografía. Este mapa traduce el «Apellido AÑO» con que el código nombra
+#  sus fuentes al número de la referencia. El número es el `value=` del <li>
+#  correspondiente en cuerpo_bibliografia(): si se reordena la lista, hay que
+#  reordenar esto.
+#
+#  Se cita por PRIMER APELLIDO + AÑO. Excepción declarada: el código llama
+#  «Mishima y Kurano 2018» a la ref. 15, así que las dos formas apuntan al 15.
+#
+#  Regla dura: no se inventa un número. Si el sitio cita algo que no está
+#  aquí, la guarda de main() aborta el build en vez de publicar un [n] mal
+#  asignado o una cita sin referencia.
+VANCOUVER = {
+    "Mao 2014": 1,
+    "Gong 2022": 2,
+    "Chow 2025": 3,
+    "Muselman 2026": 4,
+    "Pan 2008": 5,
+    "Weinbaum 2003": 6,
+    "Deserno 2004": 7,
+    "Bastiani 2010": 8,
+    "Berry 2016": 9,
+    "Mastorakos 2016": 10,
+    "Tong 2016": 11,
+    "Hisano 2011": 12,
+    "Foster 2007": 13,
+    "Bucki 2010": 14,
+    "Mishima 2018": 15,
+    "Kurano 2018": 15,
+    "Nance 2012": 16,
+    "Lockman 2004": 17,
+    "Gromnicova 2016": 18,
+    "Mouzoura 2025": 19,
+    "Cheng 2016": 20,
+    "Shi 2025": 21,
+    "Larsen 2025": 22,
+}
+
+#  «Apellido [y/& Otro] [et al.] AÑO[, Revista vol:pág]». El fragmento de
+#  revista es opcional y se descarta: con la cita numerada, repetir la revista
+#  en el cuerpo del texto sobra, está en la referencia. Lo que va DESPUÉS
+#  (Tabla 3, Fig. 1 A-E, Sec. III C…) se conserva: no es estilo de cita, es la
+#  localización exacta dentro del paper, y sin ella se pierde trazabilidad.
+#  El texto llega ESCAPADO, así que el «&» de «Bastiani & Parton» viaja como
+#  «&amp;»: se contemplan las dos formas. Sin eso, el segundo autor se leería
+#  como una cita propia («Parton 2010») que no existe en la bibliografía.
+_RE_CITA = re.compile(
+    r"\b([A-Z][a-zà-ÿ]{1,})"
+    r"(?:\s+(?:y|&amp;|&)\s+[A-Z][a-zà-ÿ]+)?"
+    r"(?:\s+et al\.?)?"
+    r",?\s+((?:19|20)\d{2})"
+    r"(?:\s*,\s*[^,·;]*?\d+\s*[:(]\s*[\w.]+[^,·;]*?(?=\s*(?:[,·;]|$)))?")
+
+_SIN_REFERENCIA = set()
+
+
+def _ref(n, base=""):
+    return f'<a class="cita" href="{base}bibliografia.html#ref{n}">[{n}]</a>'
+
+
+def _vancouver(texto, base=""):
+    """Cambia «Apellido et al. AÑO, Revista vol:pág» por su [n] enlazado.
+
+    El texto entra YA escapado. Lo que no esté en VANCOUVER se deja tal cual y
+    se apunta en _SIN_REFERENCIA para que la guarda de main() aborte: antes
+    publicar una cita sin convertir que un número inventado.
+    """
+    def _sub(m):
+        clave = f"{m.group(1)} {m.group(2)}"
+        n = VANCOUVER.get(clave)
+        if n is None:
+            _SIN_REFERENCIA.add(clave)
+            return m.group(0)
+        return _ref(n, base)
+    return _RE_CITA.sub(_sub, texto)
+
+
+def _cita_de(nombre):
+    """El [n] del paper que da nombre a un diseño («Mao 2014 (real)» -> [1]).
+
+    Devuelve "" si el nombre no lleva apellido+año, que es el caso de los
+    teóricos y del dataset: esos no salen de ningún paper.
+    """
+    m = _RE_CITA.search(nombre)
+    if not m:
+        return ""
+    clave = f"{m.group(1)} {m.group(2)}"
+    n = VANCOUVER.get(clave)
+    if n is None:
+        _SIN_REFERENCIA.add(clave)
+        return ""
+    return " " + _ref(n)
 
 
 def _etq(v):
@@ -913,7 +1014,7 @@ def _resumen_catalogo_prosa(filas_catalogo):
         veredictos = [f["rutas"][n]["veredicto"] for n in f["rutas"]]
         n_excluidas = veredictos.count("EXCLUIDA")
         n_total = len(veredictos)
-        nombre = html.escape(f["nombre"])
+        nombre = html.escape(f["nombre"]) + _cita_de(f["nombre"])
         ficha = (f"{f['diametro']:.1f} nm, ζ {f['zeta']:+.2f} mV")
         if n_excluidas == n_total:
             motivo = next((r["muere"] for r in f["rutas"].values() if r["muere"]), "—")
@@ -966,11 +1067,11 @@ def cuerpo_liposoma(d):
     <div class="cifra">{lip['min_nucleo_nulo'][0]:.1f} nm</div>
     <div class="pie">No encapsularía nada. A {lip['limite']['margen_nm']:.2f} nm del umbral.</div></div>
 </div>
-<p class="rev">Fuente: Pan et al. 2008, PRL 100:198103, Fig. 3c
+<p class="rev">Fuente: {_ref(VANCOUVER["Pan 2008"])}, Fig. 3c
 (t bicapa medido, {lip['t_bicapa'][0]:.1f}–{lip['t_bicapa'][-1]:.1f} nm).</p>
 
 <h2>Liposomas publicados</h2>
-<p class="rev">Ø y ζ medidos, con la referencia bajo cada nombre.</p>
+<p class="rev">Ø y ζ medidos, con su referencia numerada junto al nombre.</p>
 {tabla_veredictos}
 <p class="rev">Cada <b>!</b> junto a un SÍ = una compuerta que pasa con salvedad
 declarada.</p>
@@ -1003,12 +1104,14 @@ def _tablas_catalogo(filas_catalogo, nombres_rutas):
             else:
                 falta = ", ".join(r["faltan"][:2]) or "—"
                 cm.append(f'<td><span class="rev">falta: {html.escape(falta)}</span></td>')
-        nota = f'<div class="rev">{html.escape(f["nota"])}</div>' if f["nota"] else ""
-        filas_v.append(f'<tr><td><b>{html.escape(f["nombre"])}</b>{nota}</td>'
+        cita = _cita_de(f["nombre"])
+        nota = ("" if cita else
+                (f'<div class="rev">{html.escape(f["nota"])}</div>' if f["nota"] else ""))
+        filas_v.append(f'<tr><td><b>{html.escape(f["nombre"])}</b>{cita}{nota}</td>'
                        f'<td class="num">{f["diametro"]:.1f}</td>'
                        f'<td class="num">{f["zeta"]:+.2f}</td>'
                        f'<td class="num">{f["peg"]:.0f}</td>' + "".join(cv) + '</tr>')
-        filas_m.append(f'<tr><td><b>{html.escape(f["nombre"])}</b>{nota}</td>'
+        filas_m.append(f'<tr><td><b>{html.escape(f["nombre"])}</b>{cita}{nota}</td>'
                        f'<td class="num">{f["diametro"]:.1f}</td>' + "".join(cm) + '</tr>')
 
     cab = "".join(f'<th>{html.escape(n.split(" (")[0])}</th>' for n in nombres_rutas)
@@ -1080,7 +1183,7 @@ def _bloques_detalle_liposoma(detalle):
                 f'<td class="num">{_fmt_num(c["valor"])}</td>'
                 f'<td class="num">{_fmt_num(c["umbral"])}</td>'
                 f'<td>{html.escape(c["unidad"] or "")}</td>'
-                f'<td class="rev">{html.escape(c["fuente"] or "—")}</td></tr>'
+                f'<td class="rev">{_vancouver(html.escape(c["fuente"] or "—"))}</td></tr>'
                 for c in info["compuertas"])
             secciones_rutas.append(
                 f'<h4>{html.escape(nombre_ruta)} · {_etq(info["veredicto"])}</h4>'
@@ -1091,10 +1194,13 @@ def _bloques_detalle_liposoma(detalle):
         insignia_fab = (f' · <span class="etq {"si" if fab else "no"}">'
                         f'Fabricable: {"SÍ" if fab else "NO"}</span>'
                         if fab is not None else "")
-        nota = f' <span class="rev">({html.escape(it["nota"])})</span>' if it.get("nota") else ""
+        cita = _cita_de(it["nombre"])
+        nota = ("" if cita else
+                (f' <span class="rev">({html.escape(it["nota"])})</span>'
+                 if it.get("nota") else ""))
         bloques.append(f'''
 <details class="liposoma">
-<summary>{html.escape(it["nombre"])}{nota} · Ø {it["diametro"]:.1f} nm ·
+<summary>{html.escape(it["nombre"])}{cita}{nota} · Ø {it["diametro"]:.1f} nm ·
 ζ {it["zeta"]:+.2f} mV · PEG {it["peg"]:.2f} nm{insignia_fab}</summary>
 <div class="dataset50-figs">{figs}</div>
 {"".join(secciones_rutas)}
@@ -1110,12 +1216,8 @@ def cuerpo_dataset_50(d):
     tabla_veredictos, tabla_muere = _tablas_catalogo(d["dataset_50"], d["rutas"])
 
     return f"""
-<div class="aviso"><strong>50 diseños SINTÉTICOS (semilla 42).</strong>
-Combinaciones aleatorias de diámetro, ζ y PEG dentro del rango que cubren los
-diseños reales ya validados del proyecto (Mao 2014, Gong 2022, Chow 2025,
-Muselman 2026) más los teóricos. No son mediciones ni predicciones citables.
-La carga útil (G.2) queda DESCONOCIDA en los 50, por decisión vigente del
-2026-08-13: no se fijó ningún valor nuevo bajo presión de tiempo.</div>
+<div class="aviso"><strong>Dataset de 50 diseños SINTÉTICOS.</strong>
+No son mediciones ni predicciones: no deben citarse.</div>
 
 <h2>Veredictos</h2>
 {tabla_veredictos}
@@ -1310,6 +1412,19 @@ def main():
                       portada=(archivo == "index.html")),
             encoding="utf-8")
         print(f"    web/{archivo:20s} {titulo}")
+
+    # GUARDA CONTRA CITA SIN REFERENCIA. Va DESPUÉS de escribir las páginas
+    # porque _vancouver() solo se entera de lo que de verdad se publicó. Si el
+    # sitio nombra un «Apellido AÑO» que no está en VANCOUVER, la cita se queda
+    # sin número: no se publica así, se aborta. Nunca un [n] inventado.
+    if _SIN_REFERENCIA:
+        print()
+        print("  ABORTADO · CITAS DEL SITIO SIN NÚMERO DE REFERENCIA")
+        for c in sorted(_SIN_REFERENCIA):
+            print(f"    · {c}")
+        print("  Añádelas a cuerpo_bibliografia() y a VANCOUVER en construir_web.py")
+        print()
+        raise SystemExit(6)
 
     print(f"\n  web/estilo.css         hoja de estilo, sin dependencias externas")
     print(f"  web/img/               {copiadas} figuras copiadas")
