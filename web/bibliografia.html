@@ -51,4 +51,62 @@ o [13-15].</p>
   preliminares, no publicados.</p>
   <p>Generado el 2026-08-22 · <code>sh correr.sh web</code></p>
 </div></footer>
+<div class="lightbox" id="lightbox"><span class="cerrar">&times;</span><img id="lightbox-img" src="" alt=""><span class="ayuda">clic en la imagen: zoom · clic afuera o Escape: cerrar</span></div>
+<script>
+(function(){
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.figura img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lbImg.classList.remove('zoom');
+      lb.classList.remove('zoom-activo');
+      lb.classList.add('abierto');
+    });
+  });
+  var arrastrando = false, movio = false, x0 = 0, y0 = 0, sl0 = 0, st0 = 0;
+  function empezarArrastre(x, y){
+    arrastrando = true; movio = false;
+    x0 = x; y0 = y; sl0 = lb.scrollLeft; st0 = lb.scrollTop;
+    lbImg.classList.add('arrastrando');
+  }
+  function moverArrastre(x, y){
+    if (!arrastrando) return;
+    if (Math.abs(x - x0) > 3 || Math.abs(y - y0) > 3) movio = true;
+    lb.scrollLeft = sl0 - (x - x0);
+    lb.scrollTop = st0 - (y - y0);
+  }
+  function terminarArrastre(){ arrastrando = false; lbImg.classList.remove('arrastrando'); }
+  lbImg.addEventListener('mousedown', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    e.preventDefault();
+    empezarArrastre(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', function(e){ moverArrastre(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', terminarArrastre);
+  lbImg.addEventListener('touchstart', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    var t = e.touches[0]; empezarArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchmove', function(e){
+    var t = e.touches[0]; moverArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchend', terminarArrastre);
+  lbImg.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (movio) { movio = false; return; }
+    lbImg.classList.toggle('zoom');
+    lb.classList.toggle('zoom-activo', lbImg.classList.contains('zoom'));
+    if (lbImg.classList.contains('zoom')) { lb.scrollTop = 0; lb.scrollLeft = 0; }
+  });
+  function cerrar(){
+    lb.classList.remove('abierto', 'zoom-activo');
+    lbImg.classList.remove('zoom');
+    lbImg.src = '';
+  }
+  lb.addEventListener('click', cerrar);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrar(); });
+})();
+</script>
 </body></html>

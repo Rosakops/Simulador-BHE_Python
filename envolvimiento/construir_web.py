@@ -679,7 +679,23 @@ td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
 /* ---- figuras ---- */
 .figura{background:var(--papel); border:1px solid var(--linea); border-radius:11px;
   overflow:hidden; margin:1.4rem 0}
-.figura img{width:100%; display:block; background:#fff}
+.figura img{width:100%; display:block; background:#fff; cursor:zoom-in}
+/* ---- lightbox de figuras ---- */
+.lightbox{display:none; position:fixed; inset:0; background:rgba(20,22,26,.92);
+  z-index:999; padding:3.5vh 3vw; box-sizing:border-box; overflow:auto}
+.lightbox.abierto{display:flex; align-items:center; justify-content:center}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5); cursor:zoom-in;
+  transition:transform .15s ease; transform-origin:center center}
+.lightbox img.zoom{max-width:none; max-height:none; width:180%; cursor:grab}
+.lightbox img.zoom.arrastrando{cursor:grabbing; transition:none}
+.lightbox.zoom-activo{justify-content:flex-start; align-items:flex-start}
+.lightbox .cerrar{position:fixed; top:1.2rem; right:1.6rem; color:#fff;
+  font-size:2rem; line-height:1; cursor:pointer; opacity:.85; z-index:1000}
+.lightbox .cerrar:hover{opacity:1}
+.lightbox .ayuda{position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
+  color:#cfd3d8; font-size:.8rem; z-index:1000}
+
 .figura figcaption{padding:.9rem 1.15rem; border-top:1px solid var(--linea)}
 .figura figcaption b{display:block; margin-bottom:.2rem; font-size:.95rem}
 .figura figcaption span{font-size:.87rem; color:var(--suave)}
@@ -918,8 +934,83 @@ def envoltura(archivo, titulo, subtitulo, cuerpo, fecha, base="", portada=False)
   preliminares, no publicados.</p>
   <p>Generado el {fecha} · <code>sh correr.sh web</code></p>
 </div></footer>
+{LIGHTBOX}
 </body></html>
 """
+
+
+# =============================================================================
+#  LIGHTBOX DE FIGURAS
+# =============================================================================
+#  Clic en una figura: se abre a pantalla completa. Clic en la imagen abierta:
+#  zoom al 180 %, y entonces se puede arrastrar con el ratón o el dedo. Clic
+#  fuera, la X, o Escape: cerrar.
+#
+#  Recuperado literal del commit 2efce14 (`web/dataset_50.html`), donde vivía
+#  solo en la página del dataset. Se perdió al pasar esa página a
+#  construir_web.py. Ahora va en envoltura(), así que lo tienen TODAS las
+#  páginas: cualquier `.figura img` del sitio se amplía.
+#
+#  Va en una constante aparte y NO en el f-string de envoltura() porque las
+#  llaves del JavaScript chocan con las de la interpolación.
+LIGHTBOX = """<div class="lightbox" id="lightbox"><span class="cerrar">&times;</span><img id="lightbox-img" src="" alt=""><span class="ayuda">clic en la imagen: zoom · clic afuera o Escape: cerrar</span></div>
+<script>
+(function(){
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.figura img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lbImg.classList.remove('zoom');
+      lb.classList.remove('zoom-activo');
+      lb.classList.add('abierto');
+    });
+  });
+  var arrastrando = false, movio = false, x0 = 0, y0 = 0, sl0 = 0, st0 = 0;
+  function empezarArrastre(x, y){
+    arrastrando = true; movio = false;
+    x0 = x; y0 = y; sl0 = lb.scrollLeft; st0 = lb.scrollTop;
+    lbImg.classList.add('arrastrando');
+  }
+  function moverArrastre(x, y){
+    if (!arrastrando) return;
+    if (Math.abs(x - x0) > 3 || Math.abs(y - y0) > 3) movio = true;
+    lb.scrollLeft = sl0 - (x - x0);
+    lb.scrollTop = st0 - (y - y0);
+  }
+  function terminarArrastre(){ arrastrando = false; lbImg.classList.remove('arrastrando'); }
+  lbImg.addEventListener('mousedown', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    e.preventDefault();
+    empezarArrastre(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', function(e){ moverArrastre(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', terminarArrastre);
+  lbImg.addEventListener('touchstart', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    var t = e.touches[0]; empezarArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchmove', function(e){
+    var t = e.touches[0]; moverArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchend', terminarArrastre);
+  lbImg.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (movio) { movio = false; return; }
+    lbImg.classList.toggle('zoom');
+    lb.classList.toggle('zoom-activo', lbImg.classList.contains('zoom'));
+    if (lbImg.classList.contains('zoom')) { lb.scrollTop = 0; lb.scrollLeft = 0; }
+  });
+  function cerrar(){
+    lb.classList.remove('abierto', 'zoom-activo');
+    lbImg.classList.remove('zoom');
+    lbImg.src = '';
+  }
+  lb.addEventListener('click', cerrar);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrar(); });
+})();
+</script>"""
 
 
 # =============================================================================
