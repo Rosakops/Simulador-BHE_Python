@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  VERIFICACIÓN CRUZADA — la versión de Colab y la de script deben dar
+#  VERIFICACIÓN CRUZADA: la versión de Colab y la de script deben dar
 #  EXACTAMENTE los mismos números.
 #
 #  Es la salvaguarda contra el error clásico de mantener dos copias: que se
@@ -51,7 +51,7 @@ def cargar(nombre, ruta):
 def main():
     ruta_colab = AQUI / "envolvimiento_colab.py"
     if not ruta_colab.exists():
-        print("FALTA envolvimiento_colab.py — ejecuta primero construir_colab.py")
+        print("FALTA envolvimiento_colab.py: ejecuta primero construir_colab.py")
         return 1
 
     core = cargar("_core", AQUI / "envolvimiento_core.py")

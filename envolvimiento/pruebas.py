@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  CORREDOR DE PRUEBAS — una línea por suite
+#  CORREDOR DE PRUEBAS: una línea por suite
 # =============================================================================
 #  Corre las cuatro suites del proyecto y da UNA línea por cada una.
 #  Si alguna falla, y SOLO entonces, despliega su salida completa: cuando todo

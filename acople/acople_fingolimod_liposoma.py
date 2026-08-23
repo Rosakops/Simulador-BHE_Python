@@ -1,6 +1,6 @@
 #@title Simulacion entre liposoma convencional y fingolimod -Modelo 3D y Analisis-
 # =============================================================================
-#  SIMULACIÓN 3D — INSERCIÓN DE FINGOLIMOD EN LIPOSOMA POR ENERGÍA LIBRE (PMF)
+#  SIMULACIÓN 3D: INSERCIÓN DE FINGOLIMOD EN LIPOSOMA POR ENERGÍA LIBRE (PMF)
 #  Motor: dinámica Browniana sobre un potencial de fuerza media DERIVADO del logP
 #  Visualización: Plotly (graph_objects)  |  Entorno: 1 celda de Google Colab
 # =============================================================================
@@ -237,14 +237,14 @@ class Simulation3D:
         print("=" * 70)
         print(" ESPECIFICACIONES DEL MODELO DE NANOTRANSPORTE")
         print("=" * 70)
-        print(" NANOTRANSPORTADOR — Liposoma convencional (ficha):")
+        print(" NANOTRANSPORTADOR · Liposoma convencional (ficha):")
         print(f"   · Diámetro externo ............ {2*RADIO_LIPOSOMA_EXT:.1f} nm")
         print(f"   · Grosor de bicapa ........... {ESPESOR_BICAPA:.1f} nm")
         print(f"   · Radio del núcleo acuoso .... {RADIO_NUCLEO_ACUOSO:.1f} nm")
         print(f"   · Potencial zeta ............. {POTENCIAL_ZETA_mV:.1f} mV (baja carga → 'convencional')")
         print(f"   · Log P del transportador .... {LOGP_LIPOSOMA:.1f}")
         print(f"   · Fosfolípidos (real→render) . ext 7,733→1,400 | int 4,949→896")
-        print(" FÁRMACO — Fingolimod / FTY720:")
+        print(" FÁRMACO · Fingolimod / FTY720:")
         print(f"   · Fórmula / PM ............... C19H33NO2 / 307.48 g/mol")
         print(f"   · Átomos .................... 55 totales (22 pesados: 19 C, 1 N, 2 O)")
         print(f"   · XLogP3 (dato usado) ....... {LOGP_FARMACO:.2f}  (marcadamente lipófilo)")
@@ -408,7 +408,7 @@ class Simulation3D:
         """Conclusión de lo que la simulación PRUEBA (y lo que NO prueba)."""
         entra = frac_drug > 0.5 and corr > 0.9 and frac_ctrl < 0.1
         print("=" * 70)
-        print(" CONCLUSIÓN — ¿QUÉ PRUEBA ESTA SIMULACIÓN?")
+        print(" CONCLUSIÓN: ¿QUÉ PRUEBA ESTA SIMULACIÓN?")
         print("=" * 70)
         if entra:
             print(" SÍ PRUEBA (dentro del modelo de orden reducido):")
@@ -478,7 +478,7 @@ class Simulation3D:
         rango = R_BOX * 1.1
         fig = go.Figure(data=traces, frames=frames)
         fig.update_layout(
-            title=dict(text="Inserción de fingolimod en liposoma — dinámica Browniana sobre PMF(logP=4.16)",
+            title=dict(text="Inserción de fingolimod en liposoma · dinámica Browniana sobre PMF(logP=4.16)",
                        x=0.5, font=dict(size=14)),
             template="plotly_dark",
             scene=dict(
@@ -538,7 +538,7 @@ class Simulation3D:
         fig.update_yaxes(title_text="G (kcal/mol)", row=1, col=1)
         fig.update_yaxes(title_text="densidad", row=2, col=1)
         fig.update_layout(template="plotly_dark", height=680, barmode="overlay",
-                          title=dict(text="PANEL DE EVIDENCIA — el destino del fármaco es una salida CALCULADA",
+                          title=dict(text="PANEL DE EVIDENCIA: el destino del fármaco es una salida CALCULADA",
                                      x=0.5, font=dict(size=14)),
                           legend=dict(font=dict(size=10)))
         return fig

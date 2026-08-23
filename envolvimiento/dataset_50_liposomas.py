@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  DATASET DE 50 LIPOSOMAS SINTÉTICOS — último día, 2026-08-18
+#  DATASET DE 50 LIPOSOMAS SINTÉTICOS: último día, 2026-08-18
 # =============================================================================
 #  Genera 50 diseños de liposoma variando aleatoriamente los TRES parámetros
 #  físico-químicos que el simulador usa realmente para esta clase (diametro_nm,
-#  zeta_mV, peg_nm — los únicos campos de `Diseno` que dependen del diseño del
+#  zeta_mV, peg_nm: los únicos campos de `Diseno` que dependen del diseño del
 #  liposoma; farmaco_diametro_nm es propiedad del fármaco y clase="liposoma" es
 #  fija). Los corre por las 4 rutas (A/B/C/D) con `evaluar()`, exactamente el
 #  mismo motor que usa rutas.py para el CATALOGO.
@@ -16,7 +16,7 @@
 #    peg_nm        0  - 5    nm
 #  Decisión de Jhovan (2026-08-18): no ampliar con fuentes nuevas por tiempo.
 #
-#  CARGA ÚTIL (G.2): queda FUERA del bucle. No es un campo de `Diseno` — es una
+#  CARGA ÚTIL (G.2): queda FUERA del bucle. No es un campo de `Diseno`, es una
 #  compuerta aparte (g_carga_util) que hoy devuelve DESCONOCIDA para todo el
 #  CATALOGO por decisión del 2026-08-13, vigente. Los 50 diseños heredan esa
 #  misma DESCONOCIDA en C y D (las únicas rutas que la usan), sin inventar ni

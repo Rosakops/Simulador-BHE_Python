@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  ENVOLVIMIENTO DE MEMBRANA — versión SCRIPT (Python local)
+#  ENVOLVIMIENTO DE MEMBRANA: versión SCRIPT (Python local)
 #  Proyecto BHE / SENACYT. Tareas 2.4, 2.5 y 2.6.
 #
 #  Uso:
@@ -34,7 +34,7 @@ HAMAKER_REF = 4.5e-21   # valor central del barrido, para las tablas de ejemplo
 
 def cabecera():
     print("=" * 79)
-    print(" ENVOLVIMIENTO DE MEMBRANA — ¿puede el endotelio envolver el nanotransportador?")
+    print(" ENVOLVIMIENTO DE MEMBRANA: ¿puede el endotelio envolver el nanotransportador?")
     print("=" * 79)
     print(" Fuente: Deserno M., Phys. Rev. E 69, 031903 (2004).")
     print(f" Endotelio: zeta = {E.ZETA_BHE_mV} mV (Santa-Maria 2019, Fig. 4A). T = 37 °C.")
@@ -50,7 +50,7 @@ def cabecera():
 
 
 def tabla_compuertas(kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=HAMAKER_REF):
-    print(f"\n### COMPUERTAS — kappa={kappa_kT:.0f} kT, sigma={sigma_mNm} mN/m, "
+    print(f"\n### COMPUERTAS · kappa={kappa_kT:.0f} kT, sigma={sigma_mNm} mN/m, "
           f"A_H={hamaker_J:.1e} J\n")
     print(f"{'diseño':14s} {'w(uN/m)':>9} {'R_min':>7} {'pozo':>9} {'barr.ent':>9}"
           f" {'barr.env':>9}  G1 G2 G3 G4  veredicto")
@@ -73,7 +73,7 @@ def tabla_compuertas(kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=HAMAKER_REF):
 
 
 def tabla_sensibilidad():
-    print("\n### SENSIBILIDAD — por qué sigma es el parámetro que manda\n")
+    print("\n### SENSIBILIDAD: por qué sigma es el parámetro que manda\n")
     lip = LIPOSOMAS[0]
     print(f" Diseño de referencia: {lip['nombre']} "
           f"(R={lip['R_nm']} nm, zeta={lip['zeta_mV']:+.1f} mV, PEG={lip['peg_nm']} nm)\n")
@@ -94,7 +94,7 @@ def tabla_sensibilidad():
 
 def lectura():
     print("\n" + "=" * 79)
-    print(" LECTURA — qué discrimina y qué no")
+    print(" LECTURA: qué discrimina y qué no")
     print("=" * 79)
     print(" 1. Las compuertas TERMODINÁMICAS no discriminan en este rango. La adhesión")
     print("    de van der Waals en el contacto es del orden de miles de uN/m, así que")
@@ -131,7 +131,7 @@ def figuras(prefijo="envolvimiento"):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    # Fig 1 — G(D) de los tres diseños
+    # Fig 1: G(D) de los tres diseños
     fig, ax = plt.subplots(figsize=(7, 4.5))
     D = np.linspace(E.D0_nm, 6.0, 4000)
     for lip in LIPOSOMAS:
@@ -144,7 +144,7 @@ def figuras(prefijo="envolvimiento"):
     ax.set_ylim(-30, 15); ax.legend(); fig.tight_layout()
     fig.savefig(f"{prefijo}_G_de_D.png", dpi=160); plt.close(fig)
 
-    # Fig 2 — radio crítico frente a w, para los tres kappa
+    # Fig 2: radio crítico frente a w, para los tres kappa
     fig, ax = plt.subplots(figsize=(7, 4.5))
     w_grid = np.logspace(-5, -1, 400)
     for k in E.KAPPA_kT:
@@ -156,7 +156,7 @@ def figuras(prefijo="envolvimiento"):
     ax.legend(); ax.grid(alpha=0.3, which="both"); fig.tight_layout()
     fig.savefig(f"{prefijo}_radio_critico.png", dpi=160); plt.close(fig)
 
-    # Fig 3 — barrera de envolvimiento frente a sigma_tilde
+    # Fig 3: barrera de envolvimiento frente a sigma_tilde
     fig, ax = plt.subplots(figsize=(7, 4.5))
     st = np.logspace(-3, 3, 600)
     for k in E.KAPPA_kT:
@@ -174,7 +174,7 @@ def figuras(prefijo="envolvimiento"):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Módulo de envolvimiento — BHE/SENACYT")
+    ap = argparse.ArgumentParser(description="Módulo de envolvimiento · BHE/SENACYT")
     ap.add_argument("--solo-tests", action="store_true", help="solo la validación")
     ap.add_argument("--figuras", action="store_true", help="guarda las figuras PNG")
     args = ap.parse_args()

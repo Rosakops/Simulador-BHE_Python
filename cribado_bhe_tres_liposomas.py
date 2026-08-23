@@ -1,7 +1,7 @@
-#@title Cribado BHE — 3 liposomas de fingolimod x corona de proteínas x barrido de Hamaker
+#@title Cribado BHE · 3 liposomas de fingolimod x corona de proteínas x barrido de Hamaker
 #
 # =============================================================================
-#  SUPERADO por envolvimiento/envolvimiento_core.py — marcado el 2026-08-16.
+#  SUPERADO por envolvimiento/envolvimiento_core.py, marcado el 2026-08-16.
 #  NO USAR PARA RESULTADOS PUBLICADOS. Se conserva solo como registro histórico
 #  (aquí nació la idea del cribado). No alimenta la web ni las figuras del
 #  pipeline (correr.sh / construir_web.py), que usan envolvimiento_core.py.
@@ -152,7 +152,7 @@ def fraccion_equilibrio(R_ext_nm, zeta_nano_mV, peg_nm, hamaker_J):
 
 
 # =============================================================================
-#  FICHAS — valores de DISEÑO del estudio (zeta asignado en un rango, NO medido)
+#  FICHAS: valores de DISEÑO del estudio (zeta asignado en un rango, NO medido)
 # =============================================================================
 LIPOSOMAS = [
     dict(nombre="Convencional", R_ext_nm=20.0, zeta_mV=+5.0, peg_nm=0.0, frac_encaps=0.78),
@@ -174,7 +174,7 @@ def barra(frac, ancho=20):
 
 if __name__ == "__main__":
     print("=" * 78)
-    print(" CRIBADO DE ADHESIÓN A LA BHE — 3 diseños de liposoma con fingolimod")
+    print(" CRIBADO DE ADHESIÓN A LA BHE: 3 diseños de liposoma con fingolimod")
     print("=" * 78)
     print(f" Endotelio: zeta = {ZETA_BHE_mV} mV (hCMEC/D3 humano, 37 C; Santa-Maria 2019 Fig. 4A)")
     print(f" Escenario corona: zeta del liposoma -> {ZETA_CORONA_mV:+.1f} mV "
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     print("-" * 78)
     print(" El rango de cada celda es la sensibilidad al Hamaker. Si la conclusión (adhiere / no")
     print(" adhiere) NO cambia dentro del rango, el resultado es robusto pese a no tener el Hamaker")
-    print(" medido — y eso es más fuerte que un valor puntual sin respaldo.")
+    print(" medido, y eso es más fuerte que un valor puntual sin respaldo.")
     print("=" * 78)
     print(" LÍMITES QUE HAY QUE DECLARAR EN EL ARTÍCULO:")
     print(" 1. Los zeta son valores de DISEÑO asignados en un rango, no medidas. Esto es un cribado")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  SIMULADOR DE RUTAS COMPLETAS  —  proyecto BHE / SENACYT
+#  SIMULADOR DE RUTAS COMPLETAS · proyecto BHE / SENACYT
 #  Versión BINARIA (v1). Diseñada para crecer a cuantitativa sin rehacerse.
 # =============================================================================
 #
@@ -133,9 +133,9 @@ def _cmp(nombre, valor, umbral, unidad, fuente, mayor_es_mejor):
 #
 #  SUELO = G3. Es la generación más pequeña que cumple a la vez las dos
 #  condiciones del criterio ("existe Y lleva el fármaco dentro"):
-#    · diámetro MEDIDO en fuente primaria — Prosa et al. 2001, Macromolecules
+#    · diámetro MEDIDO en fuente primaria: Prosa et al. 2001, Macromolecules
 #      34:4897, Tabla 1: R = 18.8 Å por SAXS en metanol, o sea 3.76 nm.
-#    · alojamiento demostrado de un fármaco hidrófobo — Devarakonda et al. 2004,
+#    · alojamiento demostrado de un fármaco hidrófobo: Devarakonda et al. 2004,
 #      Int J Pharm 284:133, Tabla 2: complejo 1:1 con nifedipino, K = 287.6 M⁻¹
 #      a pH 7, un orden de magnitud por encima de G1 (25.6) y G2 (52.7).
 #  Por DEBAJO del suelo la compuerta NO falla: devuelve DESCONOCIDA. G1 y G2 sí
@@ -161,9 +161,9 @@ DENDRIMERO_GENERACIONES_nm = {
     3: 3.76, 4: 4.60, 5: 5.64, 6: 7.26, 7: 8.38, 8: 10.04, 9: 11.84, 10: 13.98,
 }
 
-DENDRIMERO_SUELO_nm = 3.76          # G3  — Prosa 2001, Tabla 1 (medido, SAXS)
-DENDRIMERO_TECHO_nm = 14.16         # G10 — Maiti 2004, Tabla 4 (R_SAV)
-DENDRIMERO_TECHO_MEDIDO_nm = 13.98  # G10 — Prosa 2001, Tabla 1 (medido, SAXS)
+DENDRIMERO_SUELO_nm = 3.76          # G3 · Prosa 2001, Tabla 1 (medido, SAXS)
+DENDRIMERO_TECHO_nm = 14.16         # G10 · Maiti 2004, Tabla 4 (R_SAV)
+DENDRIMERO_TECHO_MEDIDO_nm = 13.98  # G10 · Prosa 2001, Tabla 1 (medido, SAXS)
 DENDRIMERO_PRECISION = 0.05         # ±5 % de precisión global, Prosa 2001
 
 _AV_CARGA = ("el único dato de estequiometría en fuente primaria (Devarakonda "
@@ -396,7 +396,7 @@ def g_glicocalix_tamiz(d: Diseno):
         (hCMEC/D3): remover el glicocálix con enzimas NO cambió la captación
         de nanopartículas en endotelio cerebral.
     La exclusión binaria por tamaño de poro no predice el desenlace real a
-    esta escala — probablemente porque el cruce real es vía vesicular, que
+    esta escala, probablemente porque el cruce real es vía vesicular, que
     no requiere pasar por el poro. El dato geométrico (Weinbaum 2003) sigue
     siendo real y se reporta en `valor`/`umbral`; deja de ser el veredicto
     final por sí solo. Por DEBAJO del poro sigue dando PASA sin cambios.
@@ -409,7 +409,7 @@ def g_glicocalix_tamiz(d: Diseno):
         r.motivo = (f"{d.diametro_nm:.1f}nm supera el poro geométrico "
                     f"({dmax:.2f}nm, Weinbaum 2003), pero Lockman 2004 (in "
                     "situ, BHE nativa) y Gromnicova 2016 (hCMEC/D3) muestran "
-                    "cruce real medible por encima de ese tamaño — el poro "
+                    "cruce real medible por encima de ese tamaño; el poro "
                     "no es excluyente por sí solo a esta escala")
     return r
 
@@ -417,7 +417,7 @@ def g_glicocalix_tamiz(d: Diseno):
 _F_KABEDEV = ("Kabedev & Lobaskin 2022, Nanomedicine 17:979, Fig.4B/Fig.6 "
               "(digitalizado) · ajuste kT_hombro() en glicocalix.py")
 
-#  UMBRALES DE VEREDICTO — decisión METODOLÓGICA del proyecto, NO un dato de
+#  UMBRALES DE VEREDICTO: decisión METODOLÓGICA del proyecto, NO un dato de
 #  Kabedev & Lobaskin 2022 (esa fuente no publica ningún corte pasa/no-pasa).
 #  Se toma prestada la convención ESTÁNDAR de ciencia de coloides sobre
 #  cuándo una barrera de energía es cinéticamente insuperable, aplicada por
@@ -433,7 +433,7 @@ _F_KABEDEV = ("Kabedev & Lobaskin 2022, Nanomedicine 17:979, Fig.4B/Fig.6 "
 #    (barrier) that is much larger than the thermal energy... In general,
 #    one requires Gmax > 25kT." El mismo capítulo describe la floculación
 #    débil y reversible con un mínimo secundario de solo "a few kT units"
-#    (1-5 kT) — insuficiente para bloquear nada.
+#    (1-5 kT), insuficiente para bloquear nada.
 #
 #  De ahí las dos bandas: <5kT barrera insignificante frente a la agitación
 #  térmica (PASA); >25kT convención estándar de barrera insuperable (FALLA);
@@ -442,20 +442,20 @@ _F_KABEDEV = ("Kabedev & Lobaskin 2022, Nanomedicine 17:979, Fig.4B/Fig.6 "
 UMBRAL_PMF_BAJO_kT = 5.0     # por debajo: barrera insignificante frente a kT
 UMBRAL_PMF_ALTO_kT = 25.0    # por encima: convención DLVO de barrera insuperable
 _F_DLVO_UMBRAL = ("Tadros 2007, cap.1 de Colloid Stability: Role of Surface "
-                   "Forces Part I (Wiley-VCH) · Verwey & Overbeek 1948 — "
+                   "Forces Part I (Wiley-VCH) · Verwey & Overbeek 1948: "
                    "convención Gmax>25kT, aplicada por analogía al glicocálix, "
                    "NO es un umbral publicado para este sistema")
 
 
 def g_glicocalix_pmf(d: Diseno):
     """Barrera de energía (kT) del glicocálix en la meseta/hombro, vía el
-    ajuste kT_hombro() (Kabedev & Lobaskin 2022). Complementa —NO sustituye—
+    ajuste kT_hombro() (Kabedev & Lobaskin 2022). Complementa (NO sustituye)
     a g_glicocalix_tamiz(): esa compuerta tiene un umbral MEDIDO (el hueco de
     9nm de Weinbaum, verificado a 3 decimales) y sigue siendo el criterio
     geométrico independiente.
 
     El veredicto PASA/FALLA/DESCONOCIDA de ESTA compuerta usa un umbral que
-    NO viene de Kabedev — es la convención Gmax>25kT de ciencia de coloides
+    NO viene de Kabedev; es la convención Gmax>25kT de ciencia de coloides
     (Tadros 2007 / Verwey-Overbeek 1948), aplicada por analogía. Declarado
     así en `fuente` y en `motivo` para que nunca se lea como si fuera un
     dato de la fuente primaria del PMF.
@@ -474,8 +474,8 @@ def g_glicocalix_pmf(d: Diseno):
     carga = "neutro" if z == 0.0 else "negativo"
     r = G.kT_hombro(d.radio_nm, carga)
     kt = r["kT"]
-    extra = (" — EXTRAPOLADO fuera del rango medido (3.5-10nm), menos "
-             "confiable" if r["extrapolado"] else " — dentro del rango medido")
+    extra = (", EXTRAPOLADO fuera del rango medido (3.5-10nm), menos "
+             "confiable" if r["extrapolado"] else ", dentro del rango medido")
     fuente = _F_KABEDEV + " · " + _F_DLVO_UMBRAL
     base_motivo = f"carga {carga}, R={d.radio_nm:.1f}nm{extra}."
 
@@ -484,7 +484,7 @@ def g_glicocalix_pmf(d: Diseno):
                          kt, UMBRAL_PMF_BAJO_kT, "kT", UMBRAL_PMF_BAJO_kT - kt,
                          fuente,
                          advertencia=f"{base_motivo} Umbral de PASA (<5kT) es "
-                                     "convención propia, no dato de Kabedev — "
+                                     "convención propia, no dato de Kabedev; "
                                      "ver g_glicocalix_tamiz() para el criterio "
                                      "geométrico medido.")
     if kt > UMBRAL_PMF_ALTO_kT:
@@ -493,14 +493,14 @@ def g_glicocalix_pmf(d: Diseno):
                          fuente,
                          motivo=f"{base_motivo} Supera la convención DLVO de "
                                 "barrera cinéticamente insuperable (Gmax>25kT, "
-                                "Tadros 2007/Verwey-Overbeek 1948) — no es un "
+                                "Tadros 2007/Verwey-Overbeek 1948); no es un "
                                 "umbral publicado para el glicocálix.")
     return Resultado("Barrera del glicocálix (kT)", DESCONOCIDA,
                      kt, None, "kT", None, fuente,
                      motivo=f"{base_motivo} Cae en la zona de transición "
                             f"({UMBRAL_PMF_BAJO_kT:.0f}-{UMBRAL_PMF_ALTO_kT:.0f}"
                             "kT) entre la convención de barrera insignificante "
-                            "y la de barrera insuperable — ninguna de las dos "
+                            "y la de barrera insuperable; ninguna de las dos "
                             "aplica con confianza aquí.")
 
 
@@ -522,7 +522,7 @@ def g_caveola(d: Diseno):
     encima de los 60-80nm de caveola) cruza igual, por una vía confirmada
     farmacológicamente como mediada por clatrina/dinamina (clorpromazina y
     dinasor reducen el transporte sin afectar TEER ni la permeabilidad de
-    trazador) — NO caveolar. El simulador no modela la vía de clatrina;
+    trazador), NO caveolar. El simulador no modela la vía de clatrina;
     decir FALLA aquí implicaría que ninguna vía vesicular es posible, lo
     cual la propia fuente contradice. Por DEBAJO del tamaño de caveola sigue
     dando PASA sin cambios.
@@ -533,14 +533,14 @@ def g_caveola(d: Diseno):
         r.estado = DESCONOCIDA
         r.motivo = (f"{d.diametro_nm:.1f}nm no cabe en una caveola "
                     f"({E.DIAM_CAVEOLA_MAX_nm:.1f}nm), pero Wang 2026 "
-                    "muestra cruce real vía clatrina/dinamina a este tamaño "
-                    "— el simulador no modela esa vía, no se puede excluir "
+                    "muestra cruce real vía clatrina/dinamina a este tamaño; "
+                    "el simulador no modela esa vía, no se puede excluir "
                     "por esta compuerta sola")
     return r
 
 
 # -----------------------------------------------------------------------------
-#  DIFUSIÓN EN EL ESPACIO EXTRACELULAR — compuerta de DOS VARIABLES
+#  DIFUSIÓN EN EL ESPACIO EXTRACELULAR: compuerta de DOS VARIABLES
 # -----------------------------------------------------------------------------
 #  Reescrita el 2026-08-10 (tarea V-5). Antes era solo de tamaño, con el 38 nm
 #  de Thorne & Nicholson 2006. Nance et al. 2012 impugna ese número: compraron
@@ -764,8 +764,8 @@ def g_difusion_ecs(d: Diseno, que="transportador", escenario="nance"):
 #  2013 como tiempo de tránsito, pero ese número es la semivida del monocito
 #  Ly6C+ EN CIRCULACIÓN: mide SALIR DE LA SANGRE, no LLEGAR A LA LESIÓN. Se
 #  sale también al bazo, al hígado y a la médula. Tong et al. 2016 sí mide lo
-#  que la compuerta pregunta —infusión IV de monocitos cargados con
-#  nanopartícula y recuento en cerebro inflamado— y da un PICO a las 48 h, con
+#  que la compuerta pregunta (infusión IV de monocitos cargados con
+#  nanopartícula y recuento en cerebro inflamado) y da un PICO a las 48 h, con
 #  células ya detectables en el primer punto de muestreo, 24 h.
 #
 #  Los dos intervalos SE SOLAPAN y por eso no hay decisión posible:
@@ -783,13 +783,13 @@ T_MEDIO_MONOCITO_h = 20.0   # Yona 2013: vida media EN CIRCULACIÓN del Ly6C+
 def g_transito_vs_liberacion(d: Diseno):
     """¿Llega la célula a la lesión antes de que el fármaco se suelte? (B.3)
 
-    Tiempo de tránsito — Tong et al. 2016, S1 Text, textual: "Brain tissues
+    Tiempo de tránsito · Tong et al. 2016, S1 Text, textual: "Brain tissues
     were collected at 1, 2, 3 and 7 days following MDM transfers into LPS ICI
     treated mice. The number of recruited donor-derived cells peaked at 48h and
     decreased afterwards". Las células ya se detectan en el primer punto de
     muestreo (24 h), así que el tránsito real cae entre 24 y 48 h.
 
-    Tiempo de descarga — Mao et al. 2014, textual: "The release over a time
+    Tiempo de descarga · Mao et al. 2014, textual: "The release over a time
     period of 12 h was <40%, while at 24 h the liposomes still retained over
     50% FTY720 in both media" (PBS y 10 % de suero, 37 °C). Es una COTA
     INFERIOR de la semivida de liberación: >24 h, sin techo.
@@ -865,7 +865,7 @@ def g_captacion_fagocitica(d: Diseno):
     550 a 500 nm, creyendo que el artículo comparaba 150/500/700 nm.
     REVERTIDO el 2026-08-17 (C10, lectura completa del artículo vía PMC): el
     diseño experimental real (Métodos y pie de Figura 2) fabricó y marcó con
-    FITC tres tamaños, 150/550/700 nm — ese es el dato que define el umbral.
+    FITC tres tamaños, 150/550/700 nm; ese es el dato que define el umbral.
     El "500" que motivó la corrección de agosto solo aparece una vez, en la
     prosa de Resultados, resumiendo cuáles liposomas targetearon mejor; no hay
     un cuarto grupo de 500 nm descrito en Métodos. Se lee como errata de
@@ -933,22 +933,22 @@ g_transcitosis = _sin_dato(
 # tres entraron, y conviene que la compuerta lo diga, porque un hueco declarado
 # más grande de lo que es también desinforma.
 #
-#   (1) CARGA DEL LIPOSOMA — RESUELTO. Mouzoura et al. 2025 (Int J Nanomedicine
+#   (1) CARGA DEL LIPOSOMA: RESUELTO. Mouzoura et al. 2025 (Int J Nanomedicine
 #       20:239, doi 10.2147/IJN.S494512) da relación molar fármaco:lípido 1:8
 #       con eficiencia de carga 94-97.2 %, con FTY720 directo. No es la
 #       eficiencia de encapsulación de Mao 2014, que era lo que había antes y
 #       no servía.
-#   (2) UMBRAL EN PARÉNQUIMA — RESUELTO. Foster et al. 2007 (JPET 323(2):469,
+#   (2) UMBRAL EN PARÉNQUIMA: RESUELTO. Foster et al. 2007 (JPET 323(2):469,
 #       Tabla 3) mide 398 ± 186 ng/g de FTY720-P en cerebro a una dosis que FUE
 #       terapéuticamente eficaz en EAE (0.3 mg/kg, días 11-33). Eso da la
 #       concentración diana contra la que comparar.
-#   (3) CARGA DEL DENDRÍMERO CON FINGOLIMOD — sigue sin existir. El 1:1 de
+#   (3) CARGA DEL DENDRÍMERO CON FINGOLIMOD: sigue sin existir. El 1:1 de
 #       Devarakonda 2004 es con nifedipino y es estequiometría de complejo
 #       inferida de una pendiente, no carga útil medida. Congelado: el
 #       dendrímero quedó fuera del foco de simulación el 2026-08-17.
 #
 # LO QUE FALTA AHORA es UN solo eslabón, no tres: qué FRACCIÓN de la dosis
-# inyectada llega al parénquima. Y ese dato NO es un hueco independiente — es
+# inyectada llega al parénquima. Y ese dato NO es un hueco independiente, es
 # exactamente el mismo que bloquea la transcitosis. Decirlo importa: el modelo
 # tiene menos agujeros independientes de los que aparentaba, y cerrar la
 # transcitosis cerraría dos compuertas, no una.
@@ -1100,7 +1100,7 @@ def validar_contra_experimentos(verbose=True):
             f"da {r_caveola_grande.estado} (Wang 2026, vía clatrina)")
 
     # -- g_glicocalix_pmf (Kabedev, 2026-08-18): SIEMPRE DESCONOCIDA, con o sin
-    #    dato — es información continua sin umbral pasa/no-pasa medido, no un
+    #    dato: es información continua sin umbral pasa/no-pasa medido, no un
     #    reemplazo de g_glicocalix_tamiz(). No se conecta a evaluar_ruta()
     #    (forzaría NO EVALUABLE en cualquier ruta que la incluyera) hasta que
     #    Jhovan decida cómo combinarla con el veredicto binario.
@@ -1224,7 +1224,7 @@ def validar_contra_experimentos(verbose=True):
             "(G1–G2 sí complejan, falta su diámetro medido)")
     chequeo("F9 el techo del dendrímero NO alcanza la ventana de envolvimiento",
             DENDRIMERO_TECHO_nm < g_envolvimiento(Diseno("x", 20.0, 0.0)).umbral,
-            f"(margen {g_envolvimiento(Diseno('x', 20.0, 0.0)).umbral - DENDRIMERO_TECHO_nm:.2f} nm — EMPATE TÉCNICO)")
+            f"(margen {g_envolvimiento(Diseno('x', 20.0, 0.0)).umbral - DENDRIMERO_TECHO_nm:.2f} nm: EMPATE TÉCNICO)")
     chequeo("F10 el dendrímero cabe por el glicocálix y el liposoma no",
             _dend(8.0).estado == PASA
             and g_glicocalix_tamiz(Diseno("d", 8.0, 0.0)).estado == PASA
@@ -1529,7 +1529,7 @@ def notas():
     print("    ya NO excluyen por sí solos por encima de su umbral geométrico (Lockman")
     print("    2004, Gromnicova 2016 y Wang 2026 muestran cruce real por encima de esos")
     print("    tamaños). Los tres diseños teóricos ya no salen EXCLUIDOS de la ruta A por")
-    print("    esa vía — quedan NO EVALUABLE por las incógnitas que sí siguen abiertas")
+    print("    esa vía; quedan NO EVALUABLE por las incógnitas que sí siguen abiertas")
     print("    (transcitosis fuera de alcance, carga útil desconocida). Siguen EXCLUIDOS")
     print("    de la ruta B por captación fagocítica insuficiente (compuerta sin cambios).")
     print(" 5. La ruta B es además la única donde lo que tiene que difundir por el")
@@ -1936,7 +1936,7 @@ def figuras(prefijo="rutas", catalogo=None, incluir_ventanas=True):
 
 
 # =============================================================================
-#  DENDRÍMERO — informe y figura propios  (tarea G.1a)
+#  DENDRÍMERO: informe y figura propios  (tarea G.1a)
 #
 #  Van aparte a propósito. El CATÁLOGO y las tres figuras de arriba son de
 #  liposomas y ya están citadas en el informe del equipo; meter el dendrímero
@@ -2100,7 +2100,7 @@ def informe_polimeros_teoricos():
 
     print()
     print("=" * 78)
-    print("  POLÍMEROS Y MICELAS TEÓRICOS DEL ACOPLE — DATOS SINTÉTICOS")
+    print("  POLÍMEROS Y MICELAS TEÓRICOS DEL ACOPLE: DATOS SINTÉTICOS")
     print("=" * 78)
     print("  Valores inventados dentro de un rango teórico. NO son medidas y no")
     print("  cierran ninguna tarea de verificación.")
@@ -2219,7 +2219,7 @@ def informe_dendrimeros_teoricos():
 
     print()
     print("=" * 78)
-    print("  DENDRÍMEROS TEÓRICOS DEL SIMULADOR DE ACOPLE — DATOS SINTÉTICOS")
+    print("  DENDRÍMEROS TEÓRICOS DEL SIMULADOR DE ACOPLE, DATOS SINTÉTICOS")
     print("=" * 78)
     print("  Valores inventados dentro de un rango teórico. NO son medidas y no")
     print("  cierran ninguna tarea de verificación.")
@@ -2462,7 +2462,7 @@ def figura_teoricos_pmf(nombre="dend_teoricos_pmf.png"):
                   "pero es ≪ pozo: ralentiza, no revierte", fontsize=10.5)
     ax2.grid(axis="x", alpha=0.25)
 
-    fig.suptitle("Modelo de acople de las fichas — DATOS SINTÉTICOS",
+    fig.suptitle("Modelo de acople de las fichas: DATOS SINTÉTICOS",
                  fontsize=11.5, y=0.99)
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(nombre, dpi=150)
@@ -2554,7 +2554,7 @@ def figura_dendrimero(nombre="dendrimero_ventana.png"):
              fontsize=10, fontweight="bold")
     # El aviso va centrado en el EJE, no entre las dos líneas: ahí cruzaba la
     # línea roja y se leía partido.
-    ax2.text(0.5, 0.16, "EMPATE TÉCNICO — la banda de incertidumbre de la medida "
+    ax2.text(0.5, 0.16, "EMPATE TÉCNICO: la banda de incertidumbre de la medida "
              f"llega a {hi_b:.2f} nm\ny cruza el umbral de envolvimiento. "
              "Firme en valores centrales, marginal en el extremo.",
              transform=ax2.transAxes, ha="center", va="center", fontsize=9,
@@ -2661,7 +2661,7 @@ def figura_dendrimero_carga(nombre="dendrimero_carga.png"):
     ax1.set_ylabel("K(1:1)  (M⁻¹)")
     ax1.text(0.02, 0.96, "G0 no aparece:\nno formó complejo medible",
              transform=ax1.transAxes, fontsize=8, va="top", color="#c62828")
-    fig.suptitle("Carga útil del dendrímero — Devarakonda 2004, Tabla 2 "
+    fig.suptitle("Carga útil del dendrímero · Devarakonda 2004, Tabla 2 "
                  "(nifedipino, no fingolimod)\n"
                  "Todos los perfiles son A_L con pendiente < 1: la estequiometría "
                  "es 1:1, UNA molécula de fármaco por dendrímero", fontsize=11)
@@ -2730,7 +2730,7 @@ def informe_polimero():
     print("=" * 79)
     print(" POLÍMERO MACIZO · límite geométrico (tarea G.1b)")
     print("=" * 79)
-    print("  POLÍMERO MACIZO — suelo del glóbulo de cadena colapsada")
+    print("  POLÍMERO MACIZO: suelo del glóbulo de cadena colapsada")
     print("    d = (6M / pi rho N_A)^(1/3)   ·   sin techo arquitectónico")
     print()
     print("    POLÍMERO       Mw (kDa)   rho (g/cm3)   suelo (nm)   ¿pasa glicocálix?")
@@ -2856,7 +2856,7 @@ def figura_clases(nombre="clases_ventanas.png"):
     ax.set_yticklabels([e for e, _, _, _ in filas], fontsize=9)
     ax.tick_params(axis="y", length=0)
     ax.set_xlabel("diámetro (nm)")
-    # OJO con el título: decir "ninguna clase cruza el hueco" sería FALSO — el
+    # OJO con el título: decir "ninguna clase cruza el hueco" sería FALSO, el
     # liposoma y el polímero macizo lo cruzan de sobra. Lo que no existe es un
     # DIÁMETRO que esté en las dos ventanas, porque el hueco las separa.
     ax.set_title("Las tres clases contra las dos ventanas\n"

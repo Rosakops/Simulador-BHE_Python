@@ -23,9 +23,9 @@ CORE = AQUI / "envolvimiento_core.py"
 SCRIPT = AQUI / "envolvimiento_script.py"
 SALIDA = AQUI / "envolvimiento_colab.py"
 
-ENCABEZADO = '''#@title Envolvimiento de membrana — BHE/SENACYT (Fase 2: tareas 2.4, 2.5, 2.6)
+ENCABEZADO = '''#@title Envolvimiento de membrana · BHE/SENACYT (Fase 2: tareas 2.4, 2.5, 2.6)
 # =============================================================================
-#  ARCHIVO GENERADO AUTOMÁTICAMENTE — NO LO EDITES A MANO.
+#  ARCHIVO GENERADO AUTOMÁTICAMENTE: NO LO EDITES A MANO.
 #  Se genera con construir_colab.py a partir de:
 #      envolvimiento_core.py    (la física)
 #      envolvimiento_script.py  (la presentación)

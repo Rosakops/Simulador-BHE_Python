@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  GLICOCÁLIX — tarea 3.1 del cronograma v3
+#  GLICOCÁLIX: tarea 3.1 del cronograma v3
 #  Proyecto BHE / SENACYT
 #
-#  VERSIÓN 2 (2026-08-08) — reescrita tras conseguir la fuente PRIMARIA.
+#  VERSIÓN 2 (2026-08-08): reescrita tras conseguir la fuente PRIMARIA.
 #  La versión 1 usaba tamaños de malla tomados de resúmenes de búsqueda, sin
 #  verificar. Al leer el artículo original resultó que uno de esos números
 #  estaba mal interpretado. Ver "CORRECCIÓN" más abajo.
@@ -62,7 +62,7 @@
 import numpy as np
 
 # =============================================================================
-#  PARÁMETROS — todos con fuente
+#  PARÁMETROS: todos con fuente
 # =============================================================================
 
 # ---- geometría de la matriz de fibras (Weinbaum 2003, "Transport Model") ----
@@ -118,7 +118,7 @@ DELTA_BARRIDO_nm = [4.0, 8.0, 16.0]
 
 
 # =============================================================================
-#  MODELO PRINCIPAL — teoría de matriz de fibras
+#  MODELO PRINCIPAL: teoría de matriz de fibras
 # =============================================================================
 
 def fraccion_volumen_fibra(rf_nm=RF_nm, delta_nm=DELTA_nm):
@@ -162,7 +162,7 @@ def compuerta_glicocalix(R_nm, rf_nm=RF_nm, delta_nm=DELTA_nm):
 
 
 # =============================================================================
-#  PMF DEL GLICOCÁLIX — Kabedev & Lobaskin 2022 (datos DIGITALIZADOS)
+#  PMF DEL GLICOCÁLIX: Kabedev & Lobaskin 2022 (datos DIGITALIZADOS)
 #  Añadido: 2026-08-18. Punto 4 del roadmap de viabilidad predictiva (18b/18c).
 # =============================================================================
 #
@@ -173,15 +173,15 @@ def compuerta_glicocalix(R_nm, rf_nm=RF_nm, delta_nm=DELTA_nm):
 #  DOI: 10.2217/nnm-2021-0367. PMID: 35815713.
 #
 #  El artículo da el PMF(z) del glicocálix SOLO EN FIGURAS (Fig. 4B y Fig. 6),
-#  sin fórmula cerrada ni tabla numérica — confirmado tras leer el Supplementary
+#  sin fórmula cerrada ni tabla numérica, confirmado tras leer el Supplementary
 #  Material completo (solo trae teoría de vdW descartada + detalle del modelo
 #  hidrodinámico + heatmaps de distribución en el plano xy; nada de PMF
 #  tabulado). Los números de aquí son DIGITALIZACIÓN de esas gráficas, medida a
 #  pixel sobre el PDF a 600 dpi con calibración de ejes contra las marcas de
-#  los ticks (no a ojo). NO son datos tabulados por los autores — declarado
+#  los ticks (no a ojo). NO son datos tabulados por los autores, declarado
 #  así por la regla dura del proyecto de no inventar números.
 #
-#  QUÉ MODELO ES: Core Protein Model (CPM), sigma = 0.0019 nm^-2 — el mismo
+#  QUÉ MODELO ES: Core Protein Model (CPM), sigma = 0.0019 nm^-2, el mismo
 #  modelo de matriz de fibras que usa compuerta_glicocalix() arriba (aunque la
 #  parametrización geométrica de Kabedev NO es la misma que la de Weinbaum
 #  2003; son dos modelos independientes del mismo tipo de estructura).
@@ -198,14 +198,14 @@ def compuerta_glicocalix(R_nm, rf_nm=RF_nm, delta_nm=DELTA_nm):
 #  Decisión de Jhovan (2026-08-18): usar HOMBRO/MESETA como definición de
 #  barrera para G5, por ser la resistencia sostenida a lo largo del grosor de
 #  la capa (coherente con "atravesar la malla"), no un pico puntual de
-#  contacto — y por ser la única definición que Fig. 6 deja separar por carga.
+#  contacto, y por ser la única definición que Fig. 6 deja separar por carga.
 #
-#  PMF_HOMBRO_NEUTRO_kT — Fig. 4B, meseta tras el pico de contacto (NO el pico)
+#  PMF_HOMBRO_NEUTRO_kT: Fig. 4B, meseta tras el pico de contacto (NO el pico)
 #  ---------------------------------------------------------------------------
 #  Para R = 3.5, 5, 7.5, 10 nm el pico de contacto SÍ se resolvió con
 #  confianza alta (línea aislada, sin solape). Para R = 15 y 20 nm, la propia
 #  figura avisa: "For all the curves, only the last noninfinite values are
-#  shown (for the chosen sampling bin)" — el muestreo se cortó ANTES de
+#  shown (for the chosen sampling bin)", el muestreo se cortó ANTES de
 #  alcanzar el pico real, así que el valor mostrado es un PISO (cota inferior),
 #  no el pico verdadero. Se conserva la distinción explícita en el dict de
 #  abajo con "tipo": "pico" (dato directo) o "piso" (cota inferior, dato real
@@ -220,31 +220,31 @@ PMF_CONTACTO_NEUTRO_kT = {
     20.0: (9.36,  325.0, "piso"),   # muestreo cortado antes del pico real
 }
 
-#  PMF_HOMBRO_kT_A / _B — Fig. 6, región de meseta (z ~ 20-450 nm), por carga.
+#  PMF_HOMBRO_kT_A / _B: Fig. 6, región de meseta (z ~ 20-450 nm), por carga.
 #  ---------------------------------------------------------------------------
 #  _A = panel A, ρq-EG = 8.3 mEq/l. _B = panel B, ρq-EG = 25 mEq/l (misma
 #  figura, digitalizado en sesión separada del mismo día). El texto del
 #  artículo dice que el efecto de triplicar la carga del glicocálix es
-#  "relativamente pequeño" para partículas negativas — con _A y _B ya no hace
+#  "relativamente pequeño" para partículas negativas, con _A y _B ya no hace
 #  falta creerle esa frase, se puede comparar directamente.
 #
 #  "negativo" (panel A) viene de Fig. 6A (línea punteada larga); R=10nm
 #  negativo viene del INSET de Fig. 6A (el eje principal lo corta fuera de
-#  escala) — su valor es TAMBIÉN un piso: el inset empieza a mostrar la curva
+#  escala), su valor es TAMBIÉN un piso: el inset empieza a mostrar la curva
 #  en z=111 nm con 7.0 kT, pero para z<111 nm el valor sigue fuera del rango
-#  del inset (0-8 kT) — el pico real es mayor y desconocido.
+#  del inset (0-8 kT), el pico real es mayor y desconocido.
 #  "positivo" (panel A, R=10nm) viene de Fig. 6A (línea de cruces '+'); no es
-#  un valor único sino DECRECIENTE con z desde ~2.2 kT en z=50nm — se guarda
+#  un valor único sino DECRECIENTE con z desde ~2.2 kT en z=50nm, se guarda
 #  el primer punto resuelto, no un pico ni una meseta plana.
 #  R=5nm bajo carga en panel A: NO resuelto en la primera pasada (línea negra
 #  confundida con bordes de otras curvas); SÍ resuelto después con muestreo
-#  denso (30 rebanadas en z, promediado) para "neutro" y "negativo" — ver _B,
+#  denso (30 rebanadas en z, promediado) para "neutro" y "negativo", ver _B,
 #  mismo método aplicado retroactivamente a A donde fue posible.
 #
-#  PANEL B — "positivo" de R=10nm y "negativo" de R=10nm NO resueltos: la
+#  PANEL B · "positivo" de R=10nm y "negativo" de R=10nm NO resueltos: la
 #  curva "+" en este panel forma un POZO NO MONÓTONO (baja, toca un mínimo
 #  hacia z~400, vuelve a subir) que se CRUZA en pantalla con la línea
-#  punteada larga (negativa) alrededor de z=250-350 — separarlas requiere
+#  punteada larga (negativa) alrededor de z=250-350, separarlas requiere
 #  seguir cada curva por continuidad a través de z, no solo agrupar por
 #  altura en una rebanada vertical (lo que sí funcionó para las demás curvas,
 #  que no se cruzan entre sí en esa región). Forzar un número aquí sería
@@ -252,14 +252,14 @@ PMF_CONTACTO_NEUTRO_kT = {
 #  propósito. El resto de R=10nm negativo/positivo de panel B queda igual:
 #  sin digitalizar por la misma razón.
 PMF_HOMBRO_kT_A = {
-    # R_nm: {"neutro": ..., "negativo": ..., "positivo": ...}  — kT, o None si
+    # R_nm: {"neutro": ..., "negativo": ..., "positivo": ...} en kT, o None si
     # no se resolvió con confianza.
     3.5: {"neutro": (0.47, "meseta"),
           "negativo": (0.95, "meseta"),
           "positivo": (0.03, "meseta, casi plana")},
     5.0: {"neutro": None, "negativo": None, "positivo": None},  # no resuelto
     10.0: {"neutro": (2.5, "meseta, consistente con Fig.4B post-pico"),
-           "negativo": (7.0, "piso en z=111nm (inset) — pico real mayor y desconocido"),
+           "negativo": (7.0, "piso en z=111nm (inset); pico real mayor y desconocido"),
            "positivo": (2.2, "en z=50nm, DECRECIENTE con z, no es meseta plana")},
 }
 
@@ -268,11 +268,11 @@ PMF_HOMBRO_kT_B = {
           "negativo": (1.03, "meseta, promedio z=40-400nm, n=27 rebanadas"),
           "positivo": None},  # pozo no monótono, cruza con la curva negativa
     5.0: {"neutro": (0.81, "meseta, promedio z=40-400nm, n=36 rebanadas"),
-          "negativo": (1.49, "meseta, promedio z=40-400nm, n=13 rebanadas — menos denso, confianza media"),
+          "negativo": (1.49, "meseta, promedio z=40-400nm, n=13 rebanadas; menos denso, confianza media"),
           "positivo": None},  # ídem: pozo, llega a ~-5.7kT hacia z=420 (atractivo, no barrera)
-    10.0: {"neutro": (2.48, "meseta, promedio z=40-400nm, n=37 rebanadas — consistente con panel A"),
+    10.0: {"neutro": (2.48, "meseta, promedio z=40-400nm, n=37 rebanadas; consistente con panel A"),
            "negativo": None,  # sube a ~10.5kT hacia z=280-300 (lectura visual, no separada por
-                               # pixel de la curva '+' que cruza ahí — no se declara como número)
+                               # pixel de la curva '+' que cruza ahí, no se declara como número)
            "positivo": None},
 }
 
@@ -281,7 +281,7 @@ PMF_HOMBRO_kT_B = {
 #  No hay función kT(R, zeta) continua. Con huecos reales en R=15 y 20 nm
 #  neutro (piso, no pico real) y en R=10nm cargado de panel B (curvas '+' y
 #  punteada larga se cruzan, no separadas), interpolar ahora sería rellenar
-#  esos huecos con una suposición — contra la regla dura del proyecto de no
+#  esos huecos con una suposición, contra la regla dura del proyecto de no
 #  inventar números. compuerta_glicocalix() (el booleano G5_admisible de
 #  arriba) sigue siendo la única compuerta activa; estos diccionarios son
 #  datos de referencia para cuando haya más puntos o un modelo teórico que
@@ -291,17 +291,17 @@ PMF_HOMBRO_kT_B = {
 #  negativo/positivo de R=10nm en panel B, que se cruzan alrededor de
 #  z=250-350; (b) decidir con Jhovan si vale la pena un modelo teórico (p.ej.
 #  Debye-Hückel de la propia Fig.6, Ec. 3-5 del artículo) que conecte los
-#  puntos en vez de seguir digitalizando figura por figura — con _A y _B ya
+#  puntos en vez de seguir digitalizando figura por figura, con _A y _B ya
 #  cubiertos, el rendimiento marginal de seguir leyendo píxeles es bajo.
 
 
 # =============================================================================
-#  kT(R, carga) — AJUSTE continuo, NO dato digitalizado
+#  kT(R, carga): AJUSTE continuo, NO dato digitalizado
 #  Añadido: 2026-08-18. Cierra los huecos de PMF_CONTACTO_NEUTRO_kT /
 #  PMF_HOMBRO_kT_A / PMF_HOMBRO_kT_B con un modelo, no con más lectura de
 #  píxeles. Decisión de Jhovan (2026-08-18): con solo 3 anclajes limpios y
 #  huecos reales en R=15/20 y en la carga, el rendimiento marginal de seguir
-#  digitalizando es bajo — cerrar con un ajuste declarado como tal.
+#  digitalizando es bajo, cerrar con un ajuste declarado como tal.
 #
 #  QUÉ SE AJUSTÓ Y CON QUÉ
 #  ---------------------------------------------------------------------------
@@ -310,7 +310,7 @@ PMF_HOMBRO_kT_B = {
 #      R = 3.5, 5, 10 nm  ->  kT_neutro = 0.465, 0.81, 2.49  (promedio A/B)
 #  Se ajustó kT_neutro(R) = A * exp(k*R) (mínimos cuadrados sobre ln(kT), 2
 #  parámetros, 3 puntos). NO se mezclaron con los picos de contacto de
-#  Fig. 4B — son una magnitud física distinta (pico puntual vs. resistencia
+#  Fig. 4B: son una magnitud física distinta (pico puntual vs. resistencia
 #  sostenida); mezclarlos habría sesgado el ajuste, no lo habría hecho más
 #  completo. Resultado: A = 0.2099, k = 0.2497 (1/nm).
 #
@@ -318,17 +318,17 @@ PMF_HOMBRO_kT_B = {
 #      R=3.5 -> 0.50 kT   (dato: 0.465)
 #      R=5   -> 0.73 kT   (dato: 0.81)
 #      R=10  -> 2.55 kT   (dato: 2.49)
-#      R=15  -> 8.9  kT   (EXTRAPOLADO — sin dato limpio; el piso de Fig.4B es
+#      R=15  -> 8.9  kT   (EXTRAPOLADO, sin dato limpio; el piso de Fig.4B es
 #                           >=6.93 kT, el ajuste no lo contradice)
-#      R=20  -> 31.0 kT   (EXTRAPOLADO — sin dato limpio; el piso de Fig.4B es
+#      R=20  -> 31.0 kT   (EXTRAPOLADO, sin dato limpio; el piso de Fig.4B es
 #                           >=9.36 kT, el ajuste no lo contradice)
 #
-#  FACTOR DE CARGA NEGATIVA — cociente negativo/neutro medido en los 4 casos
+#  FACTOR DE CARGA NEGATIVA: cociente negativo/neutro medido en los 4 casos
 #  limpios: 2.02 (R=3.5, panel A), 2.24 (R=3.5, panel B), 1.84 (R=5, panel B),
-#  2.80 (R=10, panel A, pero ese numerador es un PISO — el cociente real en
+#  2.80 (R=10, panel A, pero ese numerador es un PISO, el cociente real en
 #  R=10 es >= 2.80, no exactamente 2.80). Promedio de los 4 = 2.22. Se usa un
 #  factor CONSTANTE en R por falta de suficientes puntos para ajustar cómo
-#  cambia con el radio — es la simplificación más honesta disponible, no una
+#  cambia con el radio, es la simplificación más honesta disponible, no una
 #  afirmación de que el cociente sea realmente constante.
 #
 #  POR QUÉ LA CARGA POSITIVA NO ENTRA EN ESTE ESQUEMA
@@ -337,7 +337,7 @@ PMF_HOMBRO_kT_B = {
 #  la barrera. Para carga positiva eso es falso: R=3.5 positivo mide ~0.03 kT
 #  (casi cancela la barrera estérica) y en panel B las curvas positivas de
 #  R=3.5/5/10 forman POZOS atractivos (PMF negativo en parte del recorrido).
-#  Multiplicar por un factor <1 constante tampoco serviría — el efecto no es
+#  Multiplicar por un factor <1 constante tampoco serviría, el efecto no es
 #  una barrera reducida, es una física distinta (atracción neta en parte del
 #  trayecto). No se modela aquí. Quien necesite carga positiva debe usar
 #  PMF_HOMBRO_kT_A / _B directamente y tratar la ausencia de barrera como
@@ -348,7 +348,7 @@ _K_AJUSTE_kT = 0.2497          # 1/nm
 
 
 def kT_hombro_neutro_kT(R_nm):
-    """kT_neutro(R) = A*exp(k*R). Ajuste, NO dato — ver cabecera de esta
+    """kT_neutro(R) = A*exp(k*R). Ajuste, NO dato; ver cabecera de esta
     sección. Reproduce los 3 anclajes medidos (R=3.5,5,10) a +-0.08 kT;
     fuera de ese rango es EXTRAPOLACIÓN, declarada como tal en el docstring
     de kT_hombro().
@@ -361,7 +361,7 @@ def kT_hombro(R_nm, carga="neutro"):
 
     carga: "neutro" (ajuste exponencial), "negativo" (ajuste x factor
     constante 2.22, ver cabecera), o "positivo" (NO soportado: lanza
-    ValueError a propósito — ver "POR QUÉ LA CARGA POSITIVA NO ENTRA EN ESTE
+    ValueError a propósito, ver "POR QUÉ LA CARGA POSITIVA NO ENTRA EN ESTE
     ESQUEMA" arriba; usar PMF_HOMBRO_kT_A/_B directamente para ese caso).
 
     Devuelve un dict con el valor, si R está dentro del rango medido
@@ -383,13 +383,13 @@ def kT_hombro(R_nm, carga="neutro"):
         raise ValueError(f"carga debe ser 'neutro' o 'negativo', recibido {carga!r}")
     extrapolado = not (3.5 <= R_nm <= 10.0)
     return dict(R_nm=R_nm, carga=carga, kT=valor, extrapolado=extrapolado,
-                nota=("fuera del rango medido (3.5-10nm) — extrapolación del "
+                nota=("fuera del rango medido (3.5-10nm), extrapolación del "
                       "ajuste, no dato" if extrapolado else
-                      "dentro del rango medido — ajuste interpolado"))
+                      "dentro del rango medido, ajuste interpolado"))
 
 
 # =============================================================================
-#  MODELO SECUNDARIO — coste osmótico de inserción (estimación de escalado)
+#  MODELO SECUNDARIO: coste osmótico de inserción (estimación de escalado)
 # =============================================================================
 
 def energia_insercion_kT(R_nm, xi_nm):
@@ -505,18 +505,18 @@ def puede_existir_liposoma_que_pase(rf_nm=RF_nm, delta_nm=DELTA_nm):
 
 
 # =============================================================================
-#  ALEXANDER–DE GENNES — solo comprobación de régimen
+#  ALEXANDER–DE GENNES: solo comprobación de régimen
 # =============================================================================
 
 def regimen_adg(R_nm, L_nm):
     """AdG describe compresión y exige R >> L. Devuelve el cociente y el fallo."""
     ratio = R_nm / L_nm
     if ratio > 1.0:
-        v = "compresión — AdG aplica"
+        v = "compresión: AdG aplica"
     elif ratio > 0.1:
-        v = "intermedio — AdG dudoso"
+        v = "intermedio: AdG dudoso"
     else:
-        v = "PENETRACIÓN — AdG NO aplica"
+        v = "PENETRACIÓN: AdG NO aplica"
     return dict(R_nm=R_nm, L_nm=L_nm, R_sobre_L=ratio, veredicto=v)
 
 
@@ -537,38 +537,38 @@ def test_glicocalix(verbose=True):
         print(" VALIDACIÓN DEL MÓDULO DE GLICOCÁLIX (v2, contra fuente primaria)")
         print("=" * 78)
 
-    # T1 — reproduce sigma del modelo NUEVO publicado por Weinbaum (0.67).
+    # T1: reproduce sigma del modelo NUEVO publicado por Weinbaum (0.67).
     s = float(coef_reflexion(3.5, RF_nm, DELTA_nm))
     chequeo("T1 sigma(albúmina) con rf=6, Delta=8", abs(s - 0.67) < 0.005,
             f"da {s:.3f} (Weinbaum: 0.67)")
 
-    # T2 — reproduce sigma del modelo ANTIGUO publicado por Weinbaum (0.52).
+    # T2: reproduce sigma del modelo ANTIGUO publicado por Weinbaum (0.52).
     s = float(coef_reflexion(3.5, RF_GAG_nm, DELTA_GAG_nm))
     chequeo("T2 sigma(albúmina) con rf=0.6, Delta=8", abs(s - 0.52) < 0.005,
             f"da {s:.3f} (Weinbaum: 0.52)")
 
-    # T3 — reproduce la fracción de volumen de fibra publicada (c = 0.326).
+    # T3: reproduce la fracción de volumen de fibra publicada (c = 0.326).
     c = fraccion_volumen_fibra(RF_nm, DELTA_nm)
     chequeo("T3 fracción de volumen de fibra", abs(c - 0.326) < 0.002,
             f"da {c:.4f} (Weinbaum: 0.326)")
 
-    # T4 — coherencia: en el radio de exclusión, phi debe ser exactamente 0.
+    # T4 · coherencia: en el radio de exclusión, phi debe ser exactamente 0.
     a_max = radio_exclusion_nm()
     chequeo("T4 phi = 0 justo en el radio de exclusión",
             abs(float(coef_particion(a_max))) < 1e-9, f"a_max = {a_max:.2f} nm")
 
-    # T5 — monotonía: phi debe decrecer al crecer el soluto.
+    # T5 · monotonía: phi debe decrecer al crecer el soluto.
     phis = [float(coef_particion(a)) for a in (0.5, 1.0, 2.0, 3.0, 4.0)]
     chequeo("T5 monotonía: phi decrece con el tamaño del soluto",
             all(phis[i] > phis[i + 1] for i in range(len(phis) - 1)))
 
-    # T6 — FALSABILIDAD: un hueco mucho mayor debe dejar pasar lo que el real no.
+    # T6 · FALSABILIDAD: un hueco mucho mayor debe dejar pasar lo que el real no.
     g_estrecho = compuerta_glicocalix(15.5, DELTA_nm)
     g_ancho = compuerta_glicocalix(15.5, RF_nm, 200.0)
     chequeo("T6 falsabilidad: con hueco de 200 nm sí pasa, con 8 nm no",
             (not g_estrecho["G5_admisible"]) and g_ancho["G5_admisible"])
 
-    # T7 — el régimen del proyecto no es el de AdG (caso menos favorable).
+    # T7: el régimen del proyecto no es el de AdG (caso menos favorable).
     #      El caso MENOS favorable es el glicocálix más FINO, porque R/L sube.
     #      Se evalúa sobre rana/hámster Y sobre el cerebral, incluido el
     #      envejecido de Shi 2025, que es el más fino de todos (232 nm).
@@ -576,7 +576,7 @@ def test_glicocalix(verbose=True):
     peor = max(regimen_adg(R, L)["R_sobre_L"] for R in (15.5, 20.0) for L in _todos_L)
     chequeo("T7 el régimen del proyecto NO es el de AdG", peor <= 0.15,
             f"R/L máximo = {peor:.4f}")
-    # T10 — el glicocálix CEREBRAL es más grueso que el de rana/hámster, así que
+    # T10: el glicocálix CEREBRAL es más grueso que el de rana/hámster, así que
     #       el trayecto hasta la membrana es MÁS largo de lo que asumía D.3.
     #       OJO: el nombre T9 ya estaba cogido más abajo (liposoma con núcleo de
     #       5 nm). Se detectó al ver la salida, no en las pruebas: dos pruebas
@@ -585,32 +585,32 @@ def test_glicocalix(verbose=True):
             min(L_GLICO_CEREBRAL_nm) > max(L_GLICO_nm),
             f"{min(L_GLICO_CEREBRAL_nm):.0f} nm frente a {max(L_GLICO_nm):.0f} nm")
 
-    # T8 — coherencia del límite geométrico del liposoma.
+    # T8: coherencia del límite geométrico del liposoma.
     chequeo("T8 liposoma de núcleo nulo = 2 espesores de bicapa",
             abs(diametro_liposoma_minimo_nm(0.0, 4.0) - 8.0) < 1e-9)
 
-    # T9 — ningún liposoma con núcleo utilizable pasa el tamiz.
+    # T9: ningún liposoma con núcleo utilizable pasa el tamiz.
     v = puede_existir_liposoma_que_pase()
     d_util = diametro_liposoma_minimo_nm(5.0, 4.0)   # núcleo de 5 nm, mínimo utilizable
     chequeo("T9 un liposoma con núcleo de 5 nm NO pasa el glicocálix",
             d_util > v["d_max_glicocalix_nm"],
             f"{d_util:.1f} nm frente a un límite de {v['d_max_glicocalix_nm']:.1f} nm")
 
-    # T11 — el ajuste kT_hombro_neutro_kT reproduce los 3 anclajes medidos.
+    # T11: el ajuste kT_hombro_neutro_kT reproduce los 3 anclajes medidos.
     anclajes = {3.5: 0.465, 5.0: 0.81, 10.0: 2.49}
     errores = {r: abs(float(kT_hombro_neutro_kT(r)) - v) for r, v in anclajes.items()}
     chequeo("T11 el ajuste exponencial reproduce los anclajes medidos (+-0.1 kT)",
             all(e < 0.1 for e in errores.values()),
             f"errores = {[round(e, 3) for e in errores.values()]}")
 
-    # T12 — el ajuste es monótono creciente en R (barrera estérica no baja).
+    # T12: el ajuste es monótono creciente en R (barrera estérica no baja).
     vals = [float(kT_hombro_neutro_kT(r)) for r in (3.5, 5, 7.5, 10, 15, 20)]
     chequeo("T12 monotonía: kT_hombro_neutro_kT crece con R",
             all(vals[i] < vals[i + 1] for i in range(len(vals) - 1)))
 
-    # T13 — la extrapolación a R=15/20 no contradice los pisos de Fig.4B
-    #       (PMF_CONTACTO_NEUTRO_kT es una magnitud distinta —pico, no
-    #       hombro— pero un hombro nunca debería caer por debajo de su
+    # T13: la extrapolación a R=15/20 no contradice los pisos de Fig.4B
+    #       (PMF_CONTACTO_NEUTRO_kT es una magnitud distinta: pico, no
+    #       hombro; pero un hombro nunca debería caer por debajo de su
     #       propio piso medido en otra figura si el piso es de verdad un
     #       límite inferior de la física real).
     piso15 = PMF_CONTACTO_NEUTRO_kT[15.0][0]
@@ -621,19 +621,19 @@ def test_glicocalix(verbose=True):
             f"R=15: {float(kT_hombro_neutro_kT(15.0)):.1f} vs piso {piso15}; "
             f"R=20: {float(kT_hombro_neutro_kT(20.0)):.1f} vs piso {piso20}")
 
-    # T14 — kT_hombro() marca correctamente interpolación vs extrapolación.
+    # T14: kT_hombro() marca correctamente interpolación vs extrapolación.
     r_interp = kT_hombro(5.0, "neutro")
     r_extrap = kT_hombro(15.0, "neutro")
     chequeo("T14 kT_hombro() distingue interpolación de extrapolación",
             (not r_interp["extrapolado"]) and r_extrap["extrapolado"])
 
-    # T15 — el factor de carga negativa se aplica multiplicativamente.
+    # T15: el factor de carga negativa se aplica multiplicativamente.
     neu = kT_hombro(5.0, "neutro")["kT"]
     neg = kT_hombro(5.0, "negativo")["kT"]
     chequeo("T15 factor de carga negativa aplicado correctamente",
             abs(neg / neu - FACTOR_CARGA_NEGATIVA) < 1e-9)
 
-    # T16 — FALSABILIDAD: la carga positiva debe rechazarse explícitamente,
+    # T16 · FALSABILIDAD: la carga positiva debe rechazarse explícitamente,
     #       no devolver un número silencioso (no es un múltiplo del neutro).
     rechazo_positivo = False
     try:
@@ -659,7 +659,7 @@ LIPOSOMAS = [("Convencional", 20.0), ("Furtivo/PEG", 15.5), ("Catiónico", 17.5)
 
 def informe():
     print("=" * 79)
-    print(" GLICOCÁLIX — ¿puede el nanotransportador atravesar la matriz?")
+    print(" GLICOCÁLIX: ¿puede el nanotransportador atravesar la matriz?")
     print("=" * 79)
     print(" Fuente primaria: Weinbaum et al., PNAS 100:7988 (2003), 'Transport Model'.")
     print(f" Geometría: radio de fibra {RF_nm} nm, hueco {DELTA_nm} nm,")
@@ -732,7 +732,7 @@ def informe():
     print("-" * 58)
 
     print("\n" + "=" * 79)
-    print(" LECTURA — el resultado más fuerte y más incómodo del proyecto")
+    print(" LECTURA: el resultado más fuerte y más incómodo del proyecto")
     print("=" * 79)
     print(" 1. Con la geometría medida, el glicocálix intacto excluye estéricamente")
     print("    todo lo que pase de ~9 nm de diámetro. Tus liposomas miden 31-40 nm.")

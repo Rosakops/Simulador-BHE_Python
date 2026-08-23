@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  construir_web.py  —  proyecto BHE / SENACYT
+#  construir_web.py · proyecto BHE / SENACYT
 #
 #  Genera una web estática con los resultados del simulador.
 #
@@ -37,7 +37,7 @@ SALIDA = RAIZ / "web"
 
 
 # =============================================================================
-#  MANTENIDO A MANO  —  lo que no vive en el código
+#  MANTENIDO A MANO: lo que no vive en el código
 # =============================================================================
 
 PROYECTO = dict(
@@ -378,10 +378,10 @@ FUENTES = [
 #  FIGURAS DE LA WEB
 #
 #  Cada página de clase lleva DOS bloques:
-#    1. SET COMÚN — las mismas tres figuras en todas: ventanas, matriz y
+#    1. SET COMÚN · las mismas tres figuras en todas: ventanas, matriz y
 #       recorrido, generadas por `rutas.figuras()` con el catálogo de esa
 #       página. Mismo orden y mismo pie siempre.
-#    2. ESPECÍFICAS DE ESTA CLASE — lo que solo existe para una clase porque
+#    2. ESPECÍFICAS DE ESTA CLASE · lo que solo existe para una clase porque
 #       solo para ella hay dato. No se replica en las demás: hacerlo obligaría
 #       a inventar números.
 # -----------------------------------------------------------------------------
@@ -597,7 +597,7 @@ def markdown(texto):
 
 
 # =============================================================================
-#  DATOS  —  todo sale de ejecutar el simulador, nada está escrito a mano
+#  DATOS: todo sale de ejecutar el simulador, nada está escrito a mano
 # =============================================================================
 
 def recoger():
@@ -667,7 +667,7 @@ def recoger():
     d["dataset_50_detalle"] = _detalle_50
 
     # -------------------------------------------------------------------
-    #  DETALLE POR DISEÑO — LIPOSOMA REALES Y TEÓRICOS (2026-08-18k). Mismo
+    #  DETALLE POR DISEÑO: LIPOSOMA REALES Y TEÓRICOS (2026-08-18k). Mismo
     #  patrón que el dataset de 50: tarjeta desplegable con las 3 figuras
     #  propias de CADA diseño (no las genéricas del catálogo entero) + el
     #  desglose de compuertas por ruta + insignia "Fabricable" (primera
@@ -1126,8 +1126,8 @@ def cuerpo_index(d):
 <h2>Resultados</h2>
 <p>Los dos rangos de tamaño teóricos para el paso pasivo hacia el cerebro no se solapan: el tamiz del
 glicocálix exige un diámetro de hasta {u['glicocalix']:.2f} nm y el envolvimiento de membrana exige al
-menos {u['envolvimiento']:.2f} nm. La separación entre ambos rangos es de {d['margen_ventanas']:.2f} nm
-— un resultado geométrico firme dentro del barrido de sensibilidad aplicado. Sin embargo, superar el
+menos {u['envolvimiento']:.2f} nm. La separación entre ambos rangos es de {d['margen_ventanas']:.2f} nm,
+un resultado geométrico firme dentro del barrido de sensibilidad aplicado. Sin embargo, superar el
 tamaño del tamiz ya no se cuenta como exclusión automática: dos medidas reales en barrera
 hematoencefálica (una en tejido nativo, otra en cultivo) muestran nanopartículas más grandes que ese
 poro cruzando de forma medible, así que el simulador reporta ese caso como dato insuficiente para
@@ -1145,7 +1145,7 @@ del dendrímero ({den['margen']:.2f} nm) es menor que la incertidumbre propia de
 
 <h2>Alcance y limitaciones del simulador</h2>
 <p>Este simulador es una herramienta de cribado con trazabilidad completa a fuente científica
-publicada — no un modelo predictivo validado. La diferencia importa: cribado significa que cada
+publicada, no un modelo predictivo validado. La diferencia importa: cribado significa que cada
 criterio aplica un umbral físico medido y publicado a un diseño concreto; predicción validada
 significaría que el resultado del modelo se contrastó contra una medida real de adhesión o
 permeación de ese mismo tipo de diseño, y ese contraste todavía no existe para ninguna de las
@@ -1162,12 +1162,12 @@ reportarlo como dato desconocido en vez de publicar una cifra sin verificar.</p>
 <p>La hipótesis original del proyecto incluía el coeficiente de partición octanol-agua (LogP) del
 nanotransportador como factor de diseño. Ese factor no se implementó: el LogP es una propiedad bien
 definida para una molécula (la del fingolimod, el fármaco, ya usada en otra parte del análisis), pero
-no existe una física publicada que conecte el LogP de un nanotransportador completo —como un
-liposoma— con su capacidad de adherirse o atravesar la barrera. Añadirlo sin una fuente científica
+no existe una física publicada que conecte el LogP de un nanotransportador completo (como un
+liposoma) con su capacidad de adherirse o atravesar la barrera. Añadirlo sin una fuente científica
 que lo respalde habría significado inventar un mecanismo, algo que este proyecto decidió no hacer.</p>
 <p>El modelo cubre únicamente las etapas de adhesión y envolvimiento del nanotransportador en la
-superficie del vaso sanguíneo cerebral. Las etapas posteriores —el paso activo hacia el otro lado de
-la barrera, el tránsito celular y la liberación final del fármaco— dependen de energía celular y
+superficie del vaso sanguíneo cerebral. Las etapas posteriores (el paso activo hacia el otro lado de
+la barrera, el tránsito celular y la liberación final del fármaco) dependen de energía celular y
 quedaron fuera del alcance de este modelo desde su planteamiento inicial.</p>
 
 <h2>Secciones</h2>
@@ -1384,7 +1384,7 @@ def _bloques_detalle_liposoma(detalle):
                 f'<td class="rev">{html.escape(c["fuente"] or "—")}</td></tr>'
                 for c in info["compuertas"])
             secciones_rutas.append(
-                f'<h4>{html.escape(nombre_ruta)} — {_etq(info["veredicto"])}</h4>'
+                f'<h4>{html.escape(nombre_ruta)} · {_etq(info["veredicto"])}</h4>'
                 '<div class="tabla-scroll"><table><thead><tr><th>Compuerta</th>'
                 '<th>Estado</th><th class="num">Valor</th><th class="num">Umbral</th>'
                 f'<th>Unidad</th><th>Fuente</th></tr></thead><tbody>{filas_c}</tbody></table></div>')
@@ -1395,7 +1395,7 @@ def _bloques_detalle_liposoma(detalle):
         nota = f' <span class="rev">({html.escape(it["nota"])})</span>' if it.get("nota") else ""
         bloques.append(f'''
 <details class="liposoma">
-<summary>{html.escape(it["nombre"])}{nota} — Ø {it["diametro"]:.1f} nm ·
+<summary>{html.escape(it["nombre"])}{nota} · Ø {it["diametro"]:.1f} nm ·
 ζ {it["zeta"]:+.2f} mV · PEG {it["peg"]:.2f} nm{insignia_fab}</summary>
 <div class="dataset50-figs">{figs}</div>
 {"".join(secciones_rutas)}
@@ -1406,7 +1406,7 @@ def _bloques_detalle_liposoma(detalle):
 def cuerpo_dataset_50(d):
     """50 liposomas sintéticos (semilla 42), último día 2026-08-18. Rango de
     diámetro/ζ/PEG tomado de CATALOGO_REAL + teóricos. NO citables como
-    predicción — mismo criterio que los diseños teóricos. La carga útil (G.2)
+    predicción; mismo criterio que los diseños teóricos. La carga útil (G.2)
     queda DESCONOCIDA en los 50, por decisión vigente del 2026-08-13."""
     tabla_veredictos, tabla_muere = _tablas_catalogo(d["dataset_50"], d["rutas"])
 
@@ -1416,7 +1416,7 @@ Combinaciones aleatorias de diámetro, ζ y PEG dentro del rango que cubren los
 diseños reales ya validados del proyecto (Mao 2014, Gong 2022, Chow 2025,
 Muselman 2026) más los teóricos. No son mediciones ni predicciones citables.
 La carga útil (G.2) queda DESCONOCIDA en los 50, por decisión vigente del
-2026-08-13 — no se fijó ningún valor nuevo bajo presión de tiempo.</div>
+2026-08-13: no se fijó ningún valor nuevo bajo presión de tiempo.</div>
 
 <h2>Veredictos</h2>
 {tabla_veredictos}
@@ -1502,7 +1502,7 @@ def _tablas_teoricos(filas_teoricos, con_clase=False):
     porque = []
     for t in filas_teoricos:
         lineas = "".join(
-            f'<li><b>{html.escape(p["nombre"])}</b> — {p["estado"]}'
+            f'<li><b>{html.escape(p["nombre"])}</b> · {p["estado"]}'
             + (f' ({p["valor"]:g} vs {p["umbral"]:.2f} nm)'
                if p["valor"] is not None and p["umbral"] is not None else "")
             + (f'<br><span class="rev">{html.escape(p["motivo"])}</span>'
@@ -1557,7 +1557,7 @@ _SIN_CATALOGO_POLIMERO = (
 def cuerpo_polimero_teoricos(d):
     tabla, porque = _tablas_teoricos(d["teoricos_polimero"], con_clase=True)
     notas = "".join(
-        f'<li><b>{html.escape(t["nombre"])}</b> — '
+        f'<li><b>{html.escape(t["nombre"])}</b> · '
         f'{html.escape(t["nota"].replace("DATO SINTÉTICO · ", ""))}</li>'
         for t in d["teoricos_polimero"])
     return f"""
@@ -1619,7 +1619,7 @@ def cuerpo_polimero(d):
                  '</tr></thead><tbody>' + fsen + '</tbody></table></div>')
 
     return f"""
-<h2>Polímero macizo — suelo del glóbulo colapsado</h2>
+<h2>Polímero macizo: suelo del glóbulo colapsado</h2>
 <p class="formula"><code>V = M / (ρ · N_A)</code> &nbsp;·&nbsp;
 <code>d = (6V / π)^(1/3)</code></p>
 <p class="rev">Una partícula maciza no puede ser más pequeña que una sola cadena

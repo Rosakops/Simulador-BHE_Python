@@ -1,6 +1,6 @@
-#@title Envolvimiento de membrana — BHE/SENACYT (Fase 2: tareas 2.4, 2.5, 2.6)
+#@title Envolvimiento de membrana · BHE/SENACYT (Fase 2: tareas 2.4, 2.5, 2.6)
 # =============================================================================
-#  ARCHIVO GENERADO AUTOMÁTICAMENTE — NO LO EDITES A MANO.
+#  ARCHIVO GENERADO AUTOMÁTICAMENTE: NO LO EDITES A MANO.
 #  Se genera con construir_colab.py a partir de:
 #      envolvimiento_core.py    (la física)
 #      envolvimiento_script.py  (la presentación)
@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-#  MÓDULO DE ENVOLVIMIENTO DE MEMBRANA  —  Fase 2 del proyecto BHE / SENACYT
+#  MÓDULO DE ENVOLVIMIENTO DE MEMBRANA: Fase 2 del proyecto BHE / SENACYT
 #  Tareas 2.4, 2.5 y 2.6 del cronograma v3.
 # =============================================================================
 #
@@ -60,7 +60,7 @@ import numpy as np
 _trapz = getattr(np, "trapezoid", None) or np.trapz
 
 # =============================================================================
-#  BLOQUE 1 — PARÁMETROS
+#  BLOQUE 1: PARÁMETROS
 #  Todo lo ajustable vive AQUÍ. Nada de esto está enterrado en el código.
 #  Cambiar un rango debe ser editar una línea y volver a ejecutar.
 # =============================================================================
@@ -127,7 +127,7 @@ KAPPA_kT = [15.0, 25.0, 50.0, 100.0]
 # LO QUE ESTE BARRIDO NO PUEDE DECIDIR: Pan 2008 solo rigidiza con cadenas
 # saturadas. Campbell et al. 2014 (Mol Pharm 11:3541, Tabla 1) da la
 # composición del endotelio cerebral humano por clase de cabeza polar
-# —esfingomielina 33.4 %, colesterol 20.8 %— pero NO el perfil de ácidos
+# (esfingomielina 33.4 %, colesterol 20.8 %) pero NO el perfil de ácidos
 # grasos, que es justo la variable que Pan necesita. Tarea C5, sigue abierta.
 #
 # Dispersión entre métodos para un mismo lípido: factor 2.3 (Nagle 2017, Tabla 3).
@@ -187,7 +187,7 @@ A_DESERNO = 5.650   # Deserno 2004, Sec. V. Ajuste asintótico a alta tensión;
 
 
 # =============================================================================
-#  BLOQUE 2 — DLVO: energía de interacción esfera-plano G(D)
+#  BLOQUE 2 · DLVO: energía de interacción esfera-plano G(D)
 # =============================================================================
 
 def energia_libre_J(D_nm, R_nm, zeta_mV, peg_nm, hamaker_J,
@@ -227,7 +227,7 @@ def energia_libre_J(D_nm, R_nm, zeta_mV, peg_nm, hamaker_J,
 
 
 # =============================================================================
-#  BLOQUE 3 — EL PUENTE: de G(D) esfera-plano a w (energía de adhesión por área)
+#  BLOQUE 3 · EL PUENTE: de G(D) esfera-plano a w (energía de adhesión por área)
 #
 #  ESTE ES EL PUNTO DELICADO DEL MÓDULO. Léelo antes de tocar nada.
 #
@@ -316,7 +316,7 @@ def pozo_y_barrera_kT(R_nm, zeta_mV, peg_nm, hamaker_J, n_puntos=40000):
 
 
 # =============================================================================
-#  BLOQUE 4 — CRITERIOS DE ENVOLVIMIENTO (Deserno 2004)
+#  BLOQUE 4: CRITERIOS DE ENVOLVIMIENTO (Deserno 2004)
 # =============================================================================
 
 def adimensionales(R_nm, w, kappa_kT, sigma_mNm):
@@ -445,7 +445,7 @@ def clasificar(R_nm, zeta_mV, peg_nm, hamaker_J, kappa_kT, sigma_mNm):
 
 
 # =============================================================================
-#  BLOQUE 5 — VALIDACIÓN (tarea 2.6) Y CONTROL DE FALSABILIDAD
+#  BLOQUE 5: VALIDACIÓN (tarea 2.6) Y CONTROL DE FALSABILIDAD
 #  Un modelo que solo sabe decir "sí" no prueba nada. Este sabe decir "no".
 # =============================================================================
 
@@ -463,7 +463,7 @@ def test_limites(verbose=True):
         print(" VALIDACIÓN DEL MÓDULO (tarea 2.6)")
         print("=" * 78)
 
-    # T1 — Derjaguin contra el resultado analítico del vdW puro.
+    # T1: Derjaguin contra el resultado analítico del vdW puro.
     A = 4.5e-21
     for R in (20.0, 50.0, 100.0):
         D = np.linspace(D0_nm, 3.0, 200000)
@@ -475,48 +475,48 @@ def test_limites(verbose=True):
         chequeo(f"T1 Derjaguin vs analítico (R={R:.0f} nm)", err < 1e-3,
                 f"error relativo {err:.2e}")
 
-    # T2 — w independiente de R para vdW puro (lo exige Derjaguin).
+    # T2: w independiente de R para vdW puro (lo exige Derjaguin).
     ws = [w_adhesion(R, 0.0, 0.0, A) for R in (20.0, 50.0, 100.0)]
     disp = (max(ws) - min(ws)) / np.mean(ws)
     chequeo("T2 w casi independiente de R (vdW dominante)", disp < 0.05,
             f"dispersión {disp:.2%}")
 
-    # T3 — adhesión nula => nunca envuelve.
+    # T3: adhesión nula => nunca envuelve.
     chequeo("T3 w=0 -> R_min infinito", np.isinf(radio_critico_nm(0.0, 25.0)))
 
-    # T4 — membrana infinitamente blanda => siempre envuelve.
+    # T4: membrana infinitamente blanda => siempre envuelve.
     r_blanda = radio_critico_nm(4.4e-3, 1e-6)
     chequeo("T4 kappa->0 -> R_min->0", r_blanda < 1e-2,
             f"R_min = {r_blanda:.2e} nm")
 
-    # T5 — sigma=0 => barrera nula (Deserno: catenoide, transición sin barrera).
+    # T5: sigma=0 => barrera nula (Deserno: catenoide, transición sin barrera).
     chequeo("T5 sigma_tilde=0 -> barrera de envolvimiento = 0",
             abs(float(barrera_envolvimiento_kT(0.0, 25.0))) < 1e-9)
 
-    # T6 — reproduce el ejemplo numérico de Deserno (22 kT).
+    # T6: reproduce el ejemplo numérico de Deserno (22 kT).
     b = float(barrera_envolvimiento_kT(0.22, 20.0))
     chequeo("T6 barrera a sigma_tilde=0.22, kappa=20 kT", abs(b - 22.0) < 1.0,
             f"da {b:.1f} kT (Deserno: ~22 kT)")
 
-    # T7 — FALSABILIDAD: aniónico fuerte debe adherir mucho peor que catiónico.
+    # T7 · FALSABILIDAD: aniónico fuerte debe adherir mucho peor que catiónico.
     w_cat = w_adhesion(20.0, +20.0, 0.0, A)
     w_ani = w_adhesion(20.0, -30.0, 0.0, A)
     chequeo("T7 falsabilidad: w(aniónico) < w(catiónico)", w_ani < w_cat,
             f"{w_ani*1e6:.0f} vs {w_cat*1e6:.0f} uN/m")
 
-    # T8 — FALSABILIDAD: el PEG debe reducir la adhesión.
+    # T8 · FALSABILIDAD: el PEG debe reducir la adhesión.
     w_sin = w_adhesion(20.0, +5.0, 0.0, A)
     w_con = w_adhesion(20.0, +5.0, 10.0, A)
     chequeo("T8 falsabilidad: el PEG reduce w", w_con < w_sin,
             f"{w_con*1e6:.0f} vs {w_sin*1e6:.0f} uN/m")
 
-    # T9 — monotonía: más kappa => radio crítico mayor.
+    # T9 · monotonía: más kappa => radio crítico mayor.
     r15 = radio_critico_nm(4.4e-3, 15.0)
     r50 = radio_critico_nm(4.4e-3, 50.0)
     chequeo("T9 monotonía: kappa mayor -> R_min mayor", r50 > r15,
             f"{r15:.1f} -> {r50:.1f} nm")
 
-    # T10 — sin NaN ni infinitos en un barrido representativo.
+    # T10: sin NaN ni infinitos en un barrido representativo.
     vals = [w_adhesion(R, z, p, h)
             for R in (10.0, 40.0, 75.0)
             for z in (-30.0, 0.0, 30.0)
@@ -524,7 +524,7 @@ def test_limites(verbose=True):
             for h in HAMAKER_J]
     chequeo("T10 sin NaN ni infinitos en el barrido", np.all(np.isfinite(vals)))
 
-    # T11 — el barrido de kappa tiene que cubrir el caso saturado + colesterol.
+    # T11: el barrido de kappa tiene que cubrir el caso saturado + colesterol.
     #       Pan 2008: K_C de DMPC sube MÁS DE 4 veces con 30 % de colesterol.
     #       Con el K_Ctd de DMPC de Nagle 2017 (24.6 kT) eso pasa de 98 kT, así
     #       que el techo del barrido no puede quedarse en 50 como estuvo hasta
@@ -533,7 +533,7 @@ def test_limites(verbose=True):
             max(KAPPA_kT) >= 4.0 * 24.6,
             f"techo {max(KAPPA_kT):.0f} kT frente a {4.0*24.6:.1f} kT")
 
-    # T12 — MARGEN REAL del diseño más pequeño frente a la rigidez. Es el número
+    # T12: MARGEN REAL del diseño más pequeño frente a la rigidez. Es el número
     #       que el barrido no decía: R_min = sqrt(2k/w) = R  ->  k = w·R²/2.
     #       Con R = 15.5 nm (el furtivo, el más pequeño del catálogo) el modelo
     #       aguanta hasta ~116 kT. TRIPWIRE: si entra un diseño más pequeño o
@@ -555,7 +555,7 @@ def test_limites(verbose=True):
 
 #!/usr/bin/env python3
 # =============================================================================
-#  ENVOLVIMIENTO DE MEMBRANA — versión SCRIPT (Python local)
+#  ENVOLVIMIENTO DE MEMBRANA: versión SCRIPT (Python local)
 #  Proyecto BHE / SENACYT. Tareas 2.4, 2.5 y 2.6.
 #
 #  Uso:
@@ -586,7 +586,7 @@ HAMAKER_REF = 4.5e-21   # valor central del barrido, para las tablas de ejemplo
 
 def cabecera():
     print("=" * 79)
-    print(" ENVOLVIMIENTO DE MEMBRANA — ¿puede el endotelio envolver el nanotransportador?")
+    print(" ENVOLVIMIENTO DE MEMBRANA: ¿puede el endotelio envolver el nanotransportador?")
     print("=" * 79)
     print(" Fuente: Deserno M., Phys. Rev. E 69, 031903 (2004).")
     print(f" Endotelio: zeta = {ZETA_BHE_mV} mV (Santa-Maria 2019, Fig. 4A). T = 37 °C.")
@@ -602,7 +602,7 @@ def cabecera():
 
 
 def tabla_compuertas(kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=HAMAKER_REF):
-    print(f"\n### COMPUERTAS — kappa={kappa_kT:.0f} kT, sigma={sigma_mNm} mN/m, "
+    print(f"\n### COMPUERTAS · kappa={kappa_kT:.0f} kT, sigma={sigma_mNm} mN/m, "
           f"A_H={hamaker_J:.1e} J\n")
     print(f"{'diseño':14s} {'w(uN/m)':>9} {'R_min':>7} {'pozo':>9} {'barr.ent':>9}"
           f" {'barr.env':>9}  G1 G2 G3 G4  veredicto")
@@ -625,7 +625,7 @@ def tabla_compuertas(kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=HAMAKER_REF):
 
 
 def tabla_sensibilidad():
-    print("\n### SENSIBILIDAD — por qué sigma es el parámetro que manda\n")
+    print("\n### SENSIBILIDAD: por qué sigma es el parámetro que manda\n")
     lip = LIPOSOMAS[0]
     print(f" Diseño de referencia: {lip['nombre']} "
           f"(R={lip['R_nm']} nm, zeta={lip['zeta_mV']:+.1f} mV, PEG={lip['peg_nm']} nm)\n")
@@ -646,7 +646,7 @@ def tabla_sensibilidad():
 
 def lectura():
     print("\n" + "=" * 79)
-    print(" LECTURA — qué discrimina y qué no")
+    print(" LECTURA: qué discrimina y qué no")
     print("=" * 79)
     print(" 1. Las compuertas TERMODINÁMICAS no discriminan en este rango. La adhesión")
     print("    de van der Waals en el contacto es del orden de miles de uN/m, así que")
@@ -683,7 +683,7 @@ def figuras(prefijo="envolvimiento"):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    # Fig 1 — G(D) de los tres diseños
+    # Fig 1: G(D) de los tres diseños
     fig, ax = plt.subplots(figsize=(7, 4.5))
     D = np.linspace(D0_nm, 6.0, 4000)
     for lip in LIPOSOMAS:
@@ -696,7 +696,7 @@ def figuras(prefijo="envolvimiento"):
     ax.set_ylim(-30, 15); ax.legend(); fig.tight_layout()
     fig.savefig(f"{prefijo}_G_de_D.png", dpi=160); plt.close(fig)
 
-    # Fig 2 — radio crítico frente a w, para los tres kappa
+    # Fig 2: radio crítico frente a w, para los tres kappa
     fig, ax = plt.subplots(figsize=(7, 4.5))
     w_grid = np.logspace(-5, -1, 400)
     for k in KAPPA_kT:
@@ -708,7 +708,7 @@ def figuras(prefijo="envolvimiento"):
     ax.legend(); ax.grid(alpha=0.3, which="both"); fig.tight_layout()
     fig.savefig(f"{prefijo}_radio_critico.png", dpi=160); plt.close(fig)
 
-    # Fig 3 — barrera de envolvimiento frente a sigma_tilde
+    # Fig 3: barrera de envolvimiento frente a sigma_tilde
     fig, ax = plt.subplots(figsize=(7, 4.5))
     st = np.logspace(-3, 3, 600)
     for k in KAPPA_kT:

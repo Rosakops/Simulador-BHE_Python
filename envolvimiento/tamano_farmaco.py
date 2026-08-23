@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tamaño molecular del fingolimod y del FTY720-fosfato — tarea C9.
+"""Tamaño molecular del fingolimod y del FTY720-fosfato (tarea C9).
 
 POR QUÉ EXISTE ESTE ARCHIVO
 ---------------------------
@@ -34,7 +34,7 @@ QUÉ NÚMERO USA EL MODELO Y POR QUÉ
 ----------------------------------
 El modelo usa la DIMENSIÓN MÁXIMA, no el diámetro esférico. Es la elección
 conservadora: si la molécula pasa con su dimensión más larga, pasa seguro. Y es
-coherente con la lección de Cheng 2019 anotada en la ficha de C.2 — con una
+coherente con la lección de Cheng 2019 anotada en la ficha de C.2, con una
 nanovarilla, los propios autores atribuyeron el bloqueo al EJE LARGO y no al
 diámetro. Cuál de las dos dimensiones gobierna el paso por un poro no está
 resuelto para una molécula flexible, así que se toma la peor.

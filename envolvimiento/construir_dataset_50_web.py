@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-#  construir_dataset_50_web.py — última día, 2026-08-18
+#  construir_dataset_50_web.py · última día, 2026-08-18
 # =============================================================================
 #  Página estática independiente para los 50 liposomas sintéticos generados en
 #  dataset_50_liposomas.py. Sigue la misma regla de oro que construir_web.py:
@@ -88,14 +88,14 @@ def construir():
         bloques_rutas = []
         for nombre_ruta, (v, resultados) in veredictos.items():
             bloques_rutas.append(
-                f'<h4>{html.escape(nombre_ruta)} — '
+                f'<h4>{html.escape(nombre_ruta)} · '
                 f'<span style="color:{_color_ruta(v)}">{v}</span></h4>'
                 f'{_tabla_compuertas(resultados)}'
             )
 
         detalles.append(f'''
 <details class="liposoma">
-<summary>{html.escape(d.nombre)} — Ø {d.diametro_nm:.1f} nm · ζ {d.zeta_mV:+.2f} mV ·
+<summary>{html.escape(d.nombre)} · Ø {d.diametro_nm:.1f} nm · ζ {d.zeta_mV:+.2f} mV ·
 PEG {d.peg_nm:.2f} nm</summary>
 <div class="detalle">
   <div class="figuras3">
@@ -114,7 +114,7 @@ PEG {d.peg_nm:.2f} nm</summary>
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Dataset de 50 liposomas sintéticos — JC155</title>
+<title>Dataset de 50 liposomas sintéticos · JC155</title>
 <link rel="stylesheet" href="estilo.css">
 <style>
 table.principal {{ border-collapse: collapse; width: 100%; margin-bottom: 2rem; }}
@@ -136,7 +136,7 @@ details.liposoma summary {{ cursor: pointer; font-weight: 600; }}
 <p class="aviso"><strong>SINTÉTICOS.</strong> Los 50 diseños son combinaciones
 aleatorias (semilla 42) de diámetro, ζ y PEG dentro del rango que cubren los
 diseños reales ya validados del proyecto (Mao 2014, Gong 2022, Chow 2025,
-Muselman 2026). No son mediciones ni predicciones citables — igual que
+Muselman 2026). No son mediciones ni predicciones citables, igual que
 CATALOGO_TEORICO. La carga útil (G.2) queda DESCONOCIDA en todos, por decisión
 vigente del 2026-08-13.</p>
 
