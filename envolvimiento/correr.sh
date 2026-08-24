@@ -17,6 +17,11 @@
 #    sh correr.sh cribado    ../cribado_bhe_tres_liposomas.py  (tiene el bug P5)
 #    sh correr.sh acople     ../acople/acople_fingolimod_liposoma.py
 #
+#  DESACTIVADOS el 2026-08-24 (decisión de Jhovan): 'dendrimero', 'teoricos' y
+#  'polimero' de la lista de arriba ya NO son subcomandos activos — el
+#  simulador es exclusivo para liposomas. Se dejan comentados como registro
+#  histórico de cuando el simulador incluía esas clases; ver más abajo.
+#
 #  POR QUÉ ESTE ARCHIVO EXISTE
 #  Las tareas de Zed descartan el campo `args` y parten los comandos con
 #  comillas. Metiendo todo aquí, Zed solo pasa una palabra y no hay nada que
@@ -81,28 +86,34 @@ figuras() {
     # distintos y con versiones distintas del código, y se contradecían entre
     # sí. Bug detectado por Jhovan el 2026-08-12. Ahora 'figuras' las genera
     # TODAS y 'web' llama a 'figuras' antes de construir.
-    $PY rutas.py --dendrimero >/dev/null
-    $PY rutas.py --polimero   >/dev/null
-    $PY rutas.py --teoricos   >/dev/null
-    echo "    + dendrímero, polímero y teóricos"
+    # DESACTIVADO 2026-08-24 (decisión de Jhovan): el simulador es exclusivo
+    # para liposomas; 'rutas.py --dendrimero/--polimero/--teoricos' ya no
+    # existen. Registro histórico, no se borra.
+    # $PY rutas.py --dendrimero >/dev/null
+    # $PY rutas.py --polimero   >/dev/null
+    # $PY rutas.py --teoricos   >/dev/null
+    # echo "    + dendrímero, polímero y teóricos"
     echo
     echo "  en $(pwd)"
 }
 
-dendrimero() {
-    titulo "DENDRÍMERO PAMAM · tarea G.1a"
-    $PY rutas.py --dendrimero
-}
-
-teoricos() {
-    titulo "TRANSPORTADORES TEÓRICOS DEL SIMULADOR DE ACOPLE · datos sintéticos"
-    $PY rutas.py --teoricos
-}
-
-polimero() {
-    titulo "POLÍMERO MACIZO Y MICELA · tarea G.1b"
-    $PY rutas.py --polimero
-}
+# DESACTIVADAS el 2026-08-24 (decisión de Jhovan): el simulador es exclusivo
+# para liposomas. 'rutas.py --dendrimero/--teoricos/--polimero' ya no
+# existen en rutas.py. Registro histórico, no se borran.
+# dendrimero() {
+#     titulo "DENDRÍMERO PAMAM · tarea G.1a"
+#     $PY rutas.py --dendrimero
+# }
+#
+# teoricos() {
+#     titulo "TRANSPORTADORES TEÓRICOS DEL SIMULADOR DE ACOPLE · datos sintéticos"
+#     $PY rutas.py --teoricos
+# }
+#
+# polimero() {
+#     titulo "POLÍMERO MACIZO Y MICELA · tarea G.1b"
+#     $PY rutas.py --polimero
+# }
 
 web() {
     # REGENERA LAS FIGURAS ANTES DE COPIARLAS. construir_web.py ejecuta el
@@ -151,9 +162,9 @@ case "${1:-todo}" in
     pruebas) pruebas ;;
     tabla)   tabla ;;
     figuras) figuras ;;
-    dendrimero) dendrimero ;;
-    teoricos) teoricos ;;
-    polimero) polimero ;;
+    # dendrimero) dendrimero ;;   # DESACTIVADO 2026-08-24, ver nota arriba
+    # teoricos) teoricos ;;       # DESACTIVADO 2026-08-24, ver nota arriba
+    # polimero) polimero ;;       # DESACTIVADO 2026-08-24, ver nota arriba
     web)     web ;;
     notas)   notas ;;
     farmaco) farmaco ;;
@@ -166,14 +177,14 @@ case "${1:-todo}" in
         figuras
         echo
         echo "  sh correr.sh notas       lectura de los resultados y qué cambió"
-        echo "  sh correr.sh dendrimero  ventana geométrica del PAMAM (G.1a)"
+        # echo "  sh correr.sh dendrimero  ventana geométrica del PAMAM (G.1a)"  # DESACTIVADO 2026-08-24
         echo "  sh correr.sh web         genera la web estática en ../web"
         echo "  sh correr.sh cribado  ·  sh correr.sh acople   (módulos de fuera)"
         echo
         ;;
     *)
         echo "No conozco la opción '$1'."
-        echo "Usa: todo | pruebas | tabla | figuras | dendrimero | teoricos | polimero | web | notas | farmaco | colab | cribado | acople"
+        echo "Usa: todo | pruebas | tabla | figuras | web | notas | farmaco | colab | cribado | acople"
         exit 2
         ;;
 esac

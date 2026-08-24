@@ -21,7 +21,6 @@
 # =============================================================================
 
 import html
-import os
 import re
 import shutil
 import datetime
@@ -506,50 +505,6 @@ def recoger():
         limite=G.puede_existir_liposoma_que_pase(),
     )
 
-    d["polimero"] = dict(
-        densidades=dict(R.POLIMERO_DENSIDAD_g_cm3),
-        suelos=[(etq, mw, R.POLIMERO_DENSIDAD_g_cm3[etq],
-                 R.diametro_globulo_colapsado_nm(mw * 1000.0,
-                                                 R.POLIMERO_DENSIDAD_g_cm3[etq]))
-                for etq, mw in (("PLA15", 15), ("PLA24", 24),
-                                ("PLGA 85:15", 53), ("PLA60", 60))],
-        sensibilidad=[(n, R.diametro_globulo_colapsado_nm(53000.0 + n * 307.48, 1.19))
-                      for n in (0, 1, 10)],
-    )
-
-    d["dendrimero"] = dict(
-        suelo=R.DENDRIMERO_SUELO_nm, techo=R.DENDRIMERO_TECHO_nm,
-        techo_medido=R.DENDRIMERO_TECHO_MEDIDO_nm, precision=R.DENDRIMERO_PRECISION,
-        margen=u["envolvimiento"] - R.DENDRIMERO_TECHO_nm, generaciones=[])
-    for g, dn in R.DENDRIMERO_GENERACIONES_nm.items():
-        r = R.g_transportador_fabricable(R.Diseno(f"G{g}", dn, 0.0, clase="dendrimero"))
-        d["dendrimero"]["generaciones"].append(dict(
-            gen=g, diametro=dn, estado=r.estado,
-            glicocalix=dn <= u["glicocalix"], envuelve=dn >= u["envolvimiento"]))
-
-    # Transportadores teóricos del simulador de acople. DATOS SINTÉTICOS.
-    def _teoricos(catalogo):
-        filas = []
-        for dis in catalogo:
-            fila = dict(nombre=dis.nombre, diametro=dis.diametro_nm,
-                        zeta=dis.zeta_mV, clase=dis.clase, nota=dis.nota,
-                        puertas=[])
-            for p in (R.g_transportador_fabricable, R.g_glicocalix_tamiz,
-                      R.g_envolvimiento):
-                r = p(dis)
-                fila["puertas"].append(dict(nombre=r.compuerta, estado=r.estado,
-                                            valor=r.valor, umbral=r.umbral,
-                                            motivo=r.motivo,
-                                            advertencia=r.advertencia))
-            filas.append(fila)
-        return filas
-
-    d["teoricos"] = _teoricos(R.catalogo_dendrimeros_teoricos())
-    d["teoricos_polimero"] = _teoricos(R.catalogo_polimeros_teoricos())
-    d["plga_mw_kDa"] = R.PLGA_MW_DERIVADA_kDa
-    d["micela_suelo_nm"] = R.MICELA_SUELO_CARGADA_nm
-    d["micela_vacia_nm"] = R.MICELA_VACIA_nm
-
     # inventario de compuertas: se descubre recorriendo las rutas, no a mano
     vistas, comps = set(), []
     sonda = R.Diseno("sonda", 40.0, -2.0, 5.0)
@@ -1018,7 +973,7 @@ LIGHTBOX = """<div class="lightbox" id="lightbox"><span class="cerrar">&times;</
 # =============================================================================
 
 def cuerpo_index(d):
-    u, den, lip = d["umbrales"], d["dendrimero"], d["liposoma"]
+    u, lip = d["umbrales"], d["liposoma"]
     bloques = "".join(
         f'<a class="bloque" href="{a}"><span class="n">{k:02d}</span>'
         f'<b>{html.escape(n)}</b><span>{html.escape(desc)}</span></a>'
@@ -1035,10 +990,6 @@ def cuerpo_index(d):
     <div class="cifra">≥ {u['fagocitosis']:.0f} nm</div></div>
   <div class="tarjeta verde"><div class="rotulo">Suelo del liposoma</div>
     <div class="cifra">≥ {lip['min_con_nucleo'][1]:.1f} nm</div></div>
-  <div class="tarjeta morado"><div class="rotulo">Ventana del dendrímero</div>
-    <div class="cifra">{den['suelo']:.2f} – {den['techo']:.2f} nm</div></div>
-  <div class="tarjeta"><div class="rotulo">Suelo del polímero macizo</div>
-    <div class="cifra">{d['polimero']['suelos'][2][3]:.2f} nm</div></div>
 </div>
 
 <h2>Resultados</h2>
@@ -1053,13 +1004,9 @@ decidir, no como bloqueo, salvo que otro criterio (carga superficial, tiempos de
 por su cuenta.</p>
 <p>De las formulaciones reales evaluadas:</p>
 {_resumen_catalogo_prosa(d["catalogo_real"])}
-<p>El dendrímero no puede fabricarse por encima de {den['techo']:.2f} nm de diámetro (límite medido de
-la química PAMAM): por encima de ese máximo, la membrana ya no puede envolverlo (necesita al menos
-{u['envolvimiento']:.2f} nm). El margen es de apenas {den['margen']:.2f} nm.</p>
-<p><b>Empates técnicos.</b> Dos de estos resultados quedan dentro del margen de duda del propio
-barrido y no deben citarse como cerrados: la separación entre los dos rangos de tamaño cae a 0.26 nm
-en el escenario más permisivo del barrido (κ = 15 kT, Hamaker = 6.5·10⁻²¹ J), y el margen del máximo
-del dendrímero ({den['margen']:.2f} nm) es menor que la incertidumbre propia de esa medida (±5 %).</p>
+<p><b>Empates técnicos.</b> Uno de estos resultados queda dentro del margen de duda del propio
+barrido y no debe citarse como cerrado: la separación entre los dos rangos de tamaño cae a 0.26 nm
+en el escenario más permisivo del barrido (κ = 15 kT, Hamaker = 6.5·10⁻²¹ J).</p>
 
 <h2>Alcance y limitaciones del simulador</h2>
 <p>Este simulador es una herramienta de cribado con trazabilidad completa a fuente científica
@@ -1080,7 +1027,7 @@ reportarlo como dato desconocido en vez de publicar una cifra sin verificar.</p>
 <p>La hipótesis original del proyecto incluía el coeficiente de partición octanol-agua (LogP) del
 nanotransportador como factor de diseño. Ese factor no se implementó: el LogP es una propiedad bien
 definida para una molécula (la del fingolimod, el fármaco, ya usada en otra parte del análisis), pero
-no existe una física publicada que conecte el LogP de un nanotransportador completo (como un
+no existe un parámetro publicado que conecte el LogP de un nanotransportador completo (como un
 liposoma) con su capacidad de adherirse o atravesar la barrera. Añadirlo sin una fuente científica
 que lo respalde habría significado inventar un mecanismo, algo que este proyecto decidió no hacer.</p>
 <p>El modelo cubre únicamente las etapas de adhesión y envolvimiento del nanotransportador en la
@@ -1520,8 +1467,7 @@ def main():
     print(f"\n  web/estilo.css         hoja de estilo, sin dependencias externas")
     print(f"  web/img/               {copiadas} figuras copiadas")
     if faltan:
-        print("\n  FALTAN figuras (regenéralas con 'sh correr.sh todo' y "
-              "'sh correr.sh dendrimero'):")
+        print("\n  FALTAN figuras (regenéralas con 'sh correr.sh todo'):")
         for f in faltan:
             print(f"    {f}")
     print(f"\n  en {SALIDA}")
