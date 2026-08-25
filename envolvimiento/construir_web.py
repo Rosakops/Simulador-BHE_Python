@@ -22,7 +22,6 @@
 
 import html
 import re
-import shutil
 import datetime
 from pathlib import Path
 
@@ -388,7 +387,15 @@ def _figuras_catalogo(prefijo):
 
 FIGURAS_LIP_REALES = _figuras_catalogo("lip_reales")
 FIGURAS_LIP_TEORICOS = _figuras_catalogo("lip_teoricos")
-# Todas las que hay que copiar a web/img.
+# Registro de las 9 figuras generales. YA NO se copian a web/img (decisión de
+# Jhovan, 2026-08-24) — se siguen generando en envolvimiento/ pero se quedan
+# ahí. Las 3 envolvimiento_* son física general del modelo (radio crítico,
+# barrera, G(D)) sin equivalente por liposoma: se conservan por si hacen falta
+# para el informe SENACYT. Las 6 lip_* son las versiones combinadas de las
+# formulaciones juntas; su contenido ya está desglosado por liposoma en
+# web/img/liposoma_reales/ y web/img/liposoma_teoricos_detalle/. La sección
+# general se retiró del HTML el 2026-08-18 (handoff 18m); esta constante
+# queda solo como catálogo/documentación, ya no alimenta ninguna copia.
 TODAS_LAS_FIGURAS = (FIGURAS_ENVOLVIMIENTO + FIGURAS_ENVOLVIMIENTO_TEORICOS
                      + FIGURAS_LIP_REALES + FIGURAS_LIP_TEORICOS)
 
@@ -1408,37 +1415,14 @@ def main():
 
     (SALIDA / "img").mkdir(parents=True, exist_ok=True)
 
-    # GUARDA CONTRA FIGURAS VIEJAS. Este script calcula los NÚMEROS ejecutando
-    # el simulador, pero las figuras son PNG en disco y solo las copia. Hasta el
-    # 2026-08-12 cada grupo de figuras se generaba con su propio comando, así
-    # que la web mezclaba PNG de momentos distintos y se contradecían entre sí
-    # y con sus propias tablas. Bug detectado por Jhovan. Lo normal es entrar
-    # por `correr.sh web`, que ya regenera todo antes; esto cubre el caso de
-    # ejecutar construir_web.py a pelo.
-    _codigo = max((AQUI / f).stat().st_mtime
-                  for f in ("rutas.py", "glicocalix.py", "envolvimiento_core.py",
-                            "envolvimiento_script.py", "construir_web.py")
-                  if (AQUI / f).exists())
-
-    copiadas, faltan, viejas = 0, [], []
-    for archivo, _, _ in TODAS_LAS_FIGURAS:
-        origen = AQUI / archivo
-        if origen.exists():
-            if origen.stat().st_mtime < _codigo:
-                viejas.append(archivo)
-            shutil.copy2(origen, SALIDA / "img" / archivo)
-            copiadas += 1
-        else:
-            faltan.append(archivo)
-
-    if viejas:
-        print()
-        print("  ABORTADO · FIGURAS MÁS VIEJAS QUE EL CÓDIGO QUE LAS DIBUJA")
-        print("  Se contradirían con las tablas. Regenera con:  sh correr.sh web")
-        for a in viejas:
-            print(f"    · {a}")
-        print()
-        raise SystemExit(4)
+    # TODAS_LAS_FIGURAS (envolvimiento_*, lip_reales_*, lip_teoricos_*) ya NO
+    # se copian aquí a web/img — ver comentario junto a esa constante. La
+    # guarda contra figuras viejas que existía en este punto (Bug detectado
+    # por Jhovan, hasta el 2026-08-12 la web mezclaba PNG de momentos
+    # distintos) ya no aplica: nada de disco se copia a ciegas en este build.
+    # Las figuras que SÍ van a la web (dataset_50, liposoma_reales,
+    # liposoma_teoricos_detalle) se generan frescas en cada build, más arriba
+    # en este mismo script, así que no pueden quedar desactualizadas.
 
     (SALIDA / "estilo.css").write_text(CSS, encoding="utf-8")
 
@@ -1464,12 +1448,11 @@ def main():
         print()
         raise SystemExit(6)
 
+    _n_img = sum(1 for _ in (SALIDA / "img").rglob("*.png"))
     print(f"\n  web/estilo.css         hoja de estilo, sin dependencias externas")
-    print(f"  web/img/               {copiadas} figuras copiadas")
-    if faltan:
-        print("\n  FALTAN figuras (regenéralas con 'sh correr.sh todo'):")
-        for f in faltan:
-            print(f"    {f}")
+    print(f"  web/img/               {_n_img} figuras (detalle por diseño; las 9 generales")
+    print(f"                         de envolvimiento_*/lip_reales_*/lip_teoricos_* ya no")
+    print(f"                         se copian aquí, quedan en envolvimiento/)")
     print(f"\n  en {SALIDA}")
     print(f"  Ábrela con:  xdg-open '{SALIDA / 'index.html'}'")
 

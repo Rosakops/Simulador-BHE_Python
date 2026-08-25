@@ -128,6 +128,27 @@ web() {
 notas() { $PY rutas.py --notas; }
 
 farmaco() {
+    # rdkit NO se comprueba en el bloque general de dependencias (arriba):
+    # solo lo usa tamano_farmaco.py (línea 84), 'farmaco' es un subcomando
+    # puntual, no parte de 'pruebas' ni de 'web' (la corrida normal del
+    # simulador nunca lo importa). Bloquear todo el script por una
+    # dependencia que el 90% de las corridas no toca sería peor que dar el
+    # aviso aquí, igual que ya se hace con plotly para 'acople'.
+    if ! $PY -c "import rdkit" 2>/dev/null; then
+        echo
+        echo "  FALTA rdkit (lo necesita tamano_farmaco.py)"
+        echo
+        echo "  Arch / EndeavourOS / Manjaro:"
+        echo "    sudo pacman -S rdkit"
+        echo "  Debian / Ubuntu / Mint:"
+        echo "    sudo apt install python3-rdkit"
+        echo "  Fedora:"
+        echo "    sudo dnf install python3-rdkit"
+        echo "  (NO uses 'pip install rdkit': en Arch el Python del sistema"
+        echo "   es externally-managed (PEP 668) y pip falla)"
+        echo
+        exit 3
+    fi
     $PY tamano_farmaco.py
 }
 
