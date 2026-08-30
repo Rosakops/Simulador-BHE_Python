@@ -39,8 +39,11 @@ import numpy as np
 
 import envolvimiento_core as E
 import glicocalix as G
-
-PASA, FALLA, DESCONOCIDA = "PASA", "FALLA", "DESCONOCIDA"
+from nanotransportador import (
+    PASA, FALLA, DESCONOCIDA, Resultado, REGISTRO, SubtipoNoSoportado,
+    categorias_disponibles, subtipos_disponibles, validar_categoria_subtipo,
+    compuerta_para,
+)
 
 
 # =============================================================================
@@ -68,6 +71,18 @@ class Diseno:
     # Sustituye al «~1.0 nm sin fuente» que había hasta el 2026-08-13 [tarea C9].
     farmaco_diametro_nm: float = 1.683
     clase: str = "liposoma"            # liposoma | dendrimero | polimerico | micela
+    # Categoría del modelo de tres niveles categoría->subtipo->parámetros
+    # (ver nanotransportador.py). `clase`, arriba, ES el subtipo dentro de
+    # esta categoría; hoy solo "organico" tiene un subtipo soportado
+    # (liposoma). Construir un Diseno directamente NO valida el par
+    # (categoria, clase): para eso está nuevo_diseno(), que es el flujo de
+    # entrada real y pasa por validar_categoria_subtipo() antes de crear
+    # nada. Este campo por defecto es consistente con el único subtipo que
+    # existe hoy, pero un Diseno construido a mano con una categoría o clase
+    # inventadas no se rechaza aquí: se rechaza en las COMPUERTAS, que
+    # devuelven DESCONOCIDA automáticamente para cualquier subtipo para el
+    # que no fueron calibradas (regla dura, ver compuerta_para()).
+    categoria: str = "organico"
     nota: str = ""
     # Solo para clase="dendrimero" (tarea G.1a-bis). La ventana geométrica
     # suelo/techo está derivada de fuente primaria de PAMAM y SOLO de PAMAM.
@@ -89,28 +104,41 @@ class Diseno:
     def radio_nm(self):
         return self.diametro_nm / 2.0
 
+    @property
+    def subtipo(self):
+        """Alias de `clase`. En este proyecto `clase` funciona como el
+        subtipo del modelo categoría->subtipo->parámetros de
+        nanotransportador.py; un solo campo de almacenamiento evita que
+        `clase` y `subtipo` puedan divergir entre sí."""
+        return self.clase
 
-@dataclass
-class Resultado:
-    """Resultado de una compuerta.
 
-    `advertencia` es la salvedad del respaldo, que no debe perderse. Su uso
-    principal es el PASA: un PASA con advertencia NO es un PASA limpio y se
-    marca en la salida con "✓!" y con punto hueco en la figura del recorrido.
+# `Resultado` (y PASA/FALLA/DESCONOCIDA) viven en nanotransportador.py y se
+# importan arriba: es vocabulario compartido con el decorador
+# compuerta_para(), que necesita poder construir un Resultado de DESCONOCIDA
+# sin importar de vuelta desde rutas.py (evita el ciclo de importación).
 
-    Una DESCONOCIDA también puede llevarla (B.3 desde el 2026-08-12), y ahí
-    documenta POR QUÉ el dato disponible no sirve. En ese caso NO se pinta
-    hueca: hueco significa aprobado con salvedad, que es lo contrario.
+
+def nuevo_diseno(categoria, subtipo, nombre, diametro_nm, zeta_mV, **kwargs):
+    """Flujo de entrada del usuario para construir un Diseno.
+
+    Sigue el orden pedido: primero la CATEGORÍA, luego el SUBTIPO dentro de
+    esa categoría. Si el subtipo pedido no está soportado todavía, lo dice
+    de forma explícita (SubtipoNoSoportado) en vez de construir un Diseno
+    con parámetros libres que terminarían evaluados por las compuertas de
+    otro subtipo.
+
+    Construir un Diseno(...) directamente (sin pasar por aquí) sigue siendo
+    posible -- lo usa medio proyecto con clase="liposoma" por defecto -- pero
+    NO pasa por esta validación. La protección real contra "parámetros
+    libres evaluados por compuertas de otro subtipo" no depende de que todo
+    el mundo use nuevo_diseno(): está en las propias compuertas, que
+    devuelven DESCONOCIDA automáticamente para cualquier subtipo para el que
+    no fueron calibradas (ver compuerta_para() en nanotransportador.py).
     """
-    compuerta: str
-    estado: str
-    valor: Optional[float] = None
-    umbral: Optional[float] = None
-    unidad: str = ""
-    margen: Optional[float] = None
-    fuente: str = ""
-    motivo: str = ""
-    advertencia: str = ""
+    validar_categoria_subtipo(categoria, subtipo)   # explota si no existe
+    return Diseno(nombre, diametro_nm, zeta_mV, clase=subtipo,
+                 categoria=categoria, **kwargs)
 
 
 def _cmp(nombre, valor, umbral, unidad, fuente, mayor_es_mejor):
@@ -124,6 +152,7 @@ def _cmp(nombre, valor, umbral, unidad, fuente, mayor_es_mejor):
 #  COMPUERTAS IMPLEMENTADAS  (cada una con su anclaje)
 # =============================================================================
 
+@compuerta_para("liposoma", nombre="Transportador fabricable")
 def g_transportador_fabricable(d: Diseno):
     """¿Es geométricamente posible un liposoma de ese tamaño?
 
@@ -132,18 +161,16 @@ def g_transportador_fabricable(d: Diseno):
     un núcleo acuoso mínimo de 4 nm para que encapsule algo.
 
     El simulador es exclusivo para liposomas (decisión de Jhovan,
-    2026-08-24): cualquier otra clase devuelve DESCONOCIDA en vez de
-    aplicarle el límite del liposoma.
+    2026-08-24). CAMBIADO (tarea de arquitectura de clases NeuroCross): el
+    chequeo de clase que vivía aquí a mano ahora lo hace el decorador
+    @compuerta_para de forma uniforme para TODAS las compuertas, no solo
+    esta -- así ninguna compuerta nueva puede olvidarse de declararlo.
     """
-    if d.clase == "liposoma":
-        minimo = G.diametro_liposoma_minimo_nm(4.0, 4.0)
-        return _cmp("Transportador fabricable", d.diametro_nm, minimo, "nm",
-                    "Pan et al. 2008, PRL 100:198103, Fig. 3c", True)
+    minimo = G.diametro_liposoma_minimo_nm(4.0, 4.0)
+    return _cmp("Transportador fabricable", d.diametro_nm, minimo, "nm",
+                "Pan et al. 2008, PRL 100:198103, Fig. 3c", True)
 
-    return Resultado("Transportador fabricable", DESCONOCIDA,
-                     d.diametro_nm, None, "nm", None, "",
-                     f"clase '{d.clase}' desconocida para esta compuerta")
-
+@compuerta_para("liposoma", nombre="Tamiz del glicocálix")
 def g_glicocalix_tamiz(d: Diseno):
     """¿Atraviesa el tamiz de la matriz de fibras del glicocálix?
 
@@ -212,6 +239,7 @@ _F_DLVO_UMBRAL = ("Tadros 2007, cap.1 de Colloid Stability: Role of Surface "
                    "NO es un umbral publicado para este sistema")
 
 
+@compuerta_para("liposoma", nombre="Barrera del glicocálix (kT)")
 def g_glicocalix_pmf(d: Diseno):
     """Barrera de energía (kT) del glicocálix en la meseta/hombro, vía el
     ajuste kT_hombro() (Kabedev & Lobaskin 2022). Complementa (NO sustituye)
@@ -269,6 +297,7 @@ def g_glicocalix_pmf(d: Diseno):
                             "aplica con confianza aquí.")
 
 
+@compuerta_para("liposoma", nombre="Envolvimiento de membrana")
 def g_envolvimiento(d: Diseno, kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=4.5e-21):
     """¿Es lo bastante grande para que la membrana lo envuelva?"""
     w = E.w_adhesion(d.radio_nm, d.zeta_mV, d.peg_nm, hamaker_J)
@@ -277,6 +306,7 @@ def g_envolvimiento(d: Diseno, kappa_kT=25.0, sigma_mNm=0.03, hamaker_J=4.5e-21)
                 "Deserno 2004, PRE 69:031903, Sec. III C", True)
 
 
+@compuerta_para("liposoma", nombre="Compuerta de caveola")
 def g_caveola(d: Diseno):
     """¿Cabe en una caveola?
 
@@ -369,6 +399,7 @@ _F_ZETA_POS = ("Berry et al. 2016, RSC Adv 6:41665, Tabla 1 y Fig. 3; "
                "Mastorakos et al. 2016, Small 12:678, Tabla 1 y Fig. 2")
 
 
+@compuerta_para("liposoma", nombre="Difusión en espacio extracelular")
 def g_difusion_ecs(d: Diseno, que="transportador", escenario="nance"):
     """¿Puede difundir por el espacio extracelular del cerebro hasta la mielina?
 
@@ -545,6 +576,8 @@ T_LIBERACION_COTA_INFERIOR_h = 24.0    # Mao 2014: a las 24 h retiene >50 %
 T_MEDIO_MONOCITO_h = 20.0   # Yona 2013: vida media EN CIRCULACIÓN del Ly6C+
 
 
+@compuerta_para("liposoma",
+                nombre="Tránsito del monocito frente a cinética de liberación")
 def g_transito_vs_liberacion(d: Diseno):
     """¿Llega la célula a la lesión antes de que el fármaco se suelte? (B.3)
 
@@ -584,6 +617,8 @@ def g_transito_vs_liberacion(d: Diseno):
             "y quedan RETIRADOS del veredicto"))
 
 
+@compuerta_para("liposoma",
+                nombre="Salida del fármaco de la célula transportadora")
 def g_salida_farmaco(d: Diseno):
     """¿Puede el fármaco salir de la célula que lo transportó? (tarea B.5)
 
@@ -617,6 +652,7 @@ def g_salida_farmaco(d: Diseno):
                          "espacio extracelular de una lesión no es ese medio"))
 
 
+@compuerta_para("liposoma", nombre="Captación fagocítica")
 def g_captacion_fagocitica(d: Diseno):
     """¿Lo capta un macrófago con eficacia suficiente?
 
@@ -656,7 +692,15 @@ def g_captacion_fagocitica(d: Diseno):
 #  Cada una corresponde a una tarea abierta del cronograma v4.
 # =============================================================================
 
-def _sin_dato(nombre, motivo, tarea):
+def _sin_dato(nombre, motivo, tarea, subtipos=("liposoma",)):
+    """Compuerta placeholder: siempre DESCONOCIDA por falta de dato, no por
+    subtipo. Aun así se decora con @compuerta_para: son compuertas escritas
+    pensando en la biología del liposoma/monocito (transcitosis, unión al
+    glicocálix, etc.), y el día que alguna de estas tareas se cierre con
+    física real, el chequeo de subtipo ya debe estar declarado -- no hay que
+    acordarse de agregarlo entonces.
+    """
+    @compuerta_para(*subtipos, nombre=nombre)
     def f(d: Diseno):
         return Resultado(nombre, DESCONOCIDA, motivo=f"{motivo}  [tarea {tarea}]")
     return f
@@ -1033,6 +1077,46 @@ def validar_contra_experimentos(verbose=True):
     chequeo("F4 un PASA con salvedad conserva su advertencia",
             bool(g_salida_farmaco(Diseno("x", 100.0, 0.0)).advertencia)
             and bool(r114.advertencia))
+
+    titulo("BLOQUE 4 · REGLA DURA DE CALIBRACIÓN POR SUBTIPO",
+           "Arquitectura de clases (NeuroCross). Ver nanotransportador.py.")
+
+    # -- F28 · REGLA DURA, de extremo a extremo: para un subtipo que ninguna
+    #    compuerta del proyecto pudo calibrar, TODAS las compuertas de TODAS
+    #    las rutas deben devolver DESCONOCIDA. Ni una sola PASA ni FALLA,
+    #    aunque los números (diámetro, ζ) sean idénticos a un diseño que sí
+    #    pasaría o fallaría como liposoma. Complementa a
+    #    nanotransportador.test_nanotransportador() (T5), que prueba el
+    #    decorador aislado; esto prueba que TODAS las compuertas reales del
+    #    catálogo de rutas quedan efectivamente cubiertas por él.
+    d_subtipo_ajeno = Diseno("subtipo sin calibrar", 40.0, -5.0,
+                             clase="marciano", categoria="marciano")
+    resultados_ajeno = [r for comps in RUTAS.values() for c in comps
+                        for r in [c(d_subtipo_ajeno)]]
+    n_violaciones = sum(r.estado != DESCONOCIDA for r in resultados_ajeno)
+    chequeo("F28 subtipo no calibrado -> TODAS las compuertas dan DESCONOCIDA",
+            n_violaciones == 0,
+            f"{n_violaciones}/{len(resultados_ajeno)} compuerta(s) violaron la regla")
+
+    # -- F29 · el flujo de entrada (categoría primero, luego subtipo) rechaza
+    #    explícitamente un subtipo no soportado, y construye normalmente el
+    #    único subtipo que sí lo está.
+    ok_construye = False
+    try:
+        d_ok = nuevo_diseno("organico", "liposoma", "x", 40.0, -5.0)
+        ok_construye = d_ok.clase == "liposoma" and d_ok.categoria == "organico"
+    except SubtipoNoSoportado:
+        pass
+    chequeo("F29a nuevo_diseno() construye 'liposoma' en 'organico' sin error",
+            ok_construye)
+
+    rechazo_explicito = False
+    try:
+        nuevo_diseno("organico", "dendrimero", "x", 40.0, -5.0)
+    except SubtipoNoSoportado:
+        rechazo_explicito = True
+    chequeo("F29b nuevo_diseno() rechaza un subtipo no soportado explícitamente",
+            rechazo_explicito)
 
     if verbose:
         print("-" * 78)
