@@ -454,7 +454,9 @@ def recoger():
                 veredicto=_ver,
                 compuertas=[dict(nombre=_r.compuerta, estado=_r.estado,
                                  valor=_r.valor, umbral=_r.umbral,
-                                 unidad=_r.unidad, fuente=_r.fuente)
+                                 unidad=_r.unidad, margen=_r.margen,
+                                 fuente=_r.fuente,
+                                 motivo=_r.motivo, advertencia=_r.advertencia)
                            for _r in _res])
         _prefijo = str(_img_dir_50 / f"liposoma_{_i:02d}")
         with _ctxlib.redirect_stdout(_io.StringIO()):
@@ -464,6 +466,19 @@ def recoger():
             zeta=_dis.zeta_mV, peg=_dis.peg_nm,
             img=f"img/dataset_50/liposoma_{_i:02d}", rutas=_rutas_det))
     d["dataset_50_detalle"] = _detalle_50
+
+    # -------------------------------------------------------------------
+    #  LIPOSOMAS NO EVALUABLES POR NINGUNA RUTA (2026-08-30). Subconjunto del
+    #  dataset de 50 cuyas 4 rutas (A/B/C/D) salen "NO EVALUABLE": ni un solo
+    #  "NO EXCLUIDA" ni un solo "EXCLUIDA", solo huecos de dato. Confirmados
+    #  hoy: Liposoma 2, 21, 22, 26, 37, 39, 45 (decisión de Jhovan, verificado
+    #  contra la web publicada). Reutiliza dataset_50_detalle, que ya trae el
+    #  desglose compuerta por compuerta con margen/motivo/advertencia.
+    # -------------------------------------------------------------------
+    d["no_evaluables_detalle"] = [
+        it for it in _detalle_50
+        if all(info["veredicto"] == "NO EVALUABLE" for info in it["rutas"].values())
+    ]
 
     # -------------------------------------------------------------------
     #  DETALLE POR DISEÑO: LIPOSOMA REALES Y TEÓRICOS (2026-08-18k). Mismo
@@ -699,6 +714,9 @@ footer{margin-top:3rem; padding:1.8rem 0 2.6rem; border-top:1px solid var(--line
 PAGINAS = [
     ("index.html", "Resumen", "Cifras y resultados."),
     ("liposoma.html", "Liposoma", "Suelo geométrico y liposomas reales publicados."),
+    ("no_evaluables.html", "No evaluables",
+     "Los 7 liposomas del dataset sintético sin veredicto por ninguna de las "
+     "4 rutas: desglose compuerta por compuerta de por qué."),
     ("bibliografia.html", "Bibliografía",
      "Referencias citadas en el sitio, estilo Vancouver, en orden de aparición."),
 ]
@@ -1276,6 +1294,68 @@ declarada.</p>
 """
 
 
+def _bloques_detalle_no_evaluables(detalle):
+    """Como _bloques_detalle_liposoma(), pero SIN colapsar el número: cada
+    compuerta lleva además su margen y el motivo/advertencia citado, para que
+    se vea el porqué del "??" y no solo el símbolo. Pensada para un puñado de
+    liposomas (los NO EVALUABLE por las 4 rutas), no para las 50 filas del
+    dataset completo -- por eso no reutiliza la tabla más compacta."""
+    bloques = []
+    for it in detalle:
+        figs = "".join(
+            f'<div class="figura"><img src="{it["img"]}_{suf}.png?v={_BUILD_TS}" '
+            f'alt="{suf}" loading="lazy"></div>'
+            for suf in ("ventanas", "matriz", "recorrido"))
+        secciones_rutas = []
+        for nombre_ruta, info in it["rutas"].items():
+            filas_c = "".join(
+                f'<tr><td>{html.escape(c["nombre"])}</td>'
+                f'<td>{_etq_gate(c["estado"])}</td>'
+                f'<td class="num">{_fmt_num(c["valor"])}</td>'
+                f'<td class="num">{_fmt_num(c["umbral"])}</td>'
+                f'<td>{html.escape(c["unidad"] or "")}</td>'
+                f'<td class="num">{_fmt_num(c["margen"])}</td>'
+                f'<td class="rev">{html.escape(c["motivo"] or c["advertencia"] or "—")}</td>'
+                f'<td class="rev">{_vancouver(html.escape(c["fuente"] or "—"))}</td></tr>'
+                for c in info["compuertas"])
+            secciones_rutas.append(
+                f'<h4>{html.escape(nombre_ruta)} · {_etq(info["veredicto"])}</h4>'
+                '<div class="tabla-scroll"><table><thead><tr><th>Compuerta</th>'
+                '<th>Estado</th><th class="num">Valor</th><th class="num">Umbral</th>'
+                '<th>Unidad</th><th class="num">Margen</th><th>Motivo / advertencia</th>'
+                f'<th>Fuente</th></tr></thead><tbody>{filas_c}</tbody></table></div>')
+        bloques.append(f'''
+<details class="liposoma" open>
+<summary>{html.escape(it["nombre"])} · Ø {it["diametro"]:.1f} nm ·
+ζ {it["zeta"]:+.2f} mV · PEG {it["peg"]:.2f} nm</summary>
+<div class="dataset50-figs">{figs}</div>
+{"".join(secciones_rutas)}
+</details>''')
+    return "".join(bloques)
+
+
+def cuerpo_no_evaluables(d):
+    """Los liposomas del dataset sintético de 50 (semilla 42) cuyas 4 rutas
+    (A/B/C/D) salen NO EVALUABLE: ninguna ruta los excluye ni los deja
+    candidatos, solo faltan datos. NO son un fallo del diseño, es un hueco
+    del modelo declarado compuerta por compuerta -- ver rutas.py."""
+    n = len(d["no_evaluables_detalle"])
+    return f"""
+<div class="aviso"><strong>{n} liposomas del dataset sintético de 50</strong>
+(semilla 42) salen "NO EVALUABLE" por las 4 rutas a la vez: ni una sola ruta
+los excluye ni los deja candidatos, solo falta el dato de al menos una
+compuerta en cada una. No son mediciones ni predicciones: son sintéticos,
+igual que el resto del dataset.</div>
+
+<h2>Parámetros y desglose compuerta por compuerta</h2>
+<p class="rev">Cada tabla trae el valor real evaluado, el umbral de
+comparación, la unidad, el margen (valor − umbral, o umbral − valor si menor
+es mejor) y el motivo o advertencia con la fuente citada -- el porqué del
+"??", no solo el símbolo.</p>
+{_bloques_detalle_no_evaluables(d["no_evaluables_detalle"])}
+"""
+
+
 def cuerpo_bibliografia(d):
     """BIBLIOGRAFÍA · VA A MANO, igual que FUENTES.
 
@@ -1330,6 +1410,7 @@ CUERPOS = {
     "liposoma.html": cuerpo_liposoma,
     "liposoma_teoricos.html": cuerpo_liposoma_teoricos,
     "dataset_50.html": cuerpo_dataset_50,
+    "no_evaluables.html": cuerpo_no_evaluables,
     "bibliografia.html": cuerpo_bibliografia,
 }
 
