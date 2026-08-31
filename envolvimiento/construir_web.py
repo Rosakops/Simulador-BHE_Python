@@ -788,6 +788,10 @@ VANCOUVER = {
     "Cheng 2016": 20,
     "Shi 2025": 21,
     "Larsen 2025": 22,
+    "Wang 2026": 23,
+    "Curtis 2019": 24,
+    "McKenna 2021": 25,
+    "Devarakonda 2004": 26,
 }
 
 #  «Apellido [y/& Otro] [et al.] AÑO[, Revista vol:pág]». El fragmento de
@@ -1294,6 +1298,56 @@ declarada.</p>
 """
 
 
+#  Limpieza de motivo/advertencia SOLO para no_evaluables.html (2026-08-31,
+#  a pedido de Jhovan). rutas.py sigue trayendo sus etiquetas [tarea X] y
+#  alguna cita autor-año suelta o sin año -- eso es el registro auditable del
+#  proyecto y no se toca. Pero un lector sin contexto no sabe qué es "tarea
+#  C.2" ni "ruta C", y _vancouver() por sí solo no resuelve una cita sin año
+#  ("Nance solo midió...") ni dos autores fundidos en una ("Shi y Larsen
+#  2025", que solo matchea el primero). Estas dos tablas son solo de
+#  PRESENTACIÓN: no alteran qué motivo trae cada Resultado, solo cómo se
+#  muestra en esta página.
+_RE_TAREA_ENTRE_CORCHETES = re.compile(r"\s*\[tarea[^\]]*\]", re.IGNORECASE)
+_RE_TAREA_SUELTA = re.compile(r"\s*Tarea [A-Z]\.\d+\.?\s*$")
+
+_REESCRITURA_NO_EVALUABLE = {
+    "La vía de escape que se había propuesto para D.3 (huecos sin cubrir) "
+    "queda reducida al 7 %.":
+        "La posibilidad de que quedaran huecos sin cubrir en el glicocálix, "
+        "por donde el receptor fuera accesible sin atravesarlo, queda "
+        "reducida al 7 % de la superficie.",
+    "la ruta C necesita una catiónica":
+        "esta vía de entrada requiere una partícula con carga positiva "
+        "(catiónica)",
+    "540-726 nm de glicocálix cerebral (Shi y Larsen 2025)":
+        "540-726 nm de glicocálix cerebral (Shi 2025; Larsen 2025)",
+    "el 1:1 de Devarakonda es con nifedipino":
+        "el 1:1 de Devarakonda 2004 se midió con otro fármaco (nifedipino), "
+        "no con fingolimod",
+    "métrica que no es la de Nance":
+        "métrica distinta de la que usó Nance 2012",
+    "Nance solo midió de":
+        "Nance 2012 solo midió de",
+}
+
+
+def _texto_llano_no_evaluable(texto):
+    """Motivo/advertencia de una compuerta, en lenguaje llano para quien no
+    conoce el historial del proyecto: sin etiquetas de tarea interna y con
+    toda cita unificada al [n] numerado de bibliografia.html. Entra y sale ya
+    escapado con html.escape()."""
+    for viejo, nuevo in _REESCRITURA_NO_EVALUABLE.items():
+        texto = texto.replace(viejo, nuevo)
+    texto = _RE_TAREA_ENTRE_CORCHETES.sub("", texto)
+    texto = _RE_TAREA_SUELTA.sub("", texto)
+    #  _RE_CITA exige apellido en minúsculas tras la inicial ([a-zà-ÿ]{1,}),
+    #  así que «McKenna» (mayúscula interna) nunca matchea y queda como texto
+    #  suelto: se resuelve a mano en vez de tocar la regex compartida por
+    #  todo el sitio.
+    texto = texto.replace("McKenna 2021", _ref(25))
+    return _vancouver(texto)
+
+
 def _bloques_detalle_no_evaluables(detalle):
     """Como _bloques_detalle_liposoma(), pero SIN colapsar el número: cada
     compuerta lleva además su margen y el motivo/advertencia citado, para que
@@ -1315,7 +1369,7 @@ def _bloques_detalle_no_evaluables(detalle):
                 f'<td class="num">{_fmt_num(c["umbral"])}</td>'
                 f'<td>{html.escape(c["unidad"] or "")}</td>'
                 f'<td class="num">{_fmt_num(c["margen"])}</td>'
-                f'<td class="rev">{html.escape(c["motivo"] or c["advertencia"] or "—")}</td>'
+                f'<td class="rev">{_texto_llano_no_evaluable(html.escape(c["motivo"] or c["advertencia"] or "—"))}</td>'
                 f'<td class="rev">{_vancouver(html.escape(c["fuente"] or "—"))}</td></tr>'
                 for c in info["compuertas"])
             secciones_rutas.append(
@@ -1360,19 +1414,21 @@ def cuerpo_bibliografia(d):
     """BIBLIOGRAFÍA · VA A MANO, igual que FUENTES.
 
     Restaurada literal del último HTML publicado que la tenía
-    (commit 2efce14, `web/bibliografia.html`, generado el 2026-08-18). Se
-    recuperó tal cual: 22 referencias en estilo Vancouver, en orden de
-    aparición, con su numeración original intacta. NO se reconstruyó de
-    memoria ni se completó a ojo.
+    (commit 2efce14, `web/bibliografia.html`, generado el 2026-08-18), 22
+    referencias en estilo Vancouver, en orden de aparición, con su numeración
+    original intacta. NO se reconstruyó de memoria ni se completó a ojo.
+
+    Ampliada el 2026-08-31: refs. 23-26 (Wang 2026, Curtis 2019, McKenna 2021,
+    Devarakonda 2004), citadas en no_evaluables.html donde antes solo vivían
+    como texto suelto sin [n] (ya estaban en FUENTES, ya publicadas en el
+    resto del sitio como referencia completa fuera de tabla -- lo que faltaba
+    era el atajo apellido+año -> número en VANCOUVER).
 
     NO confundir con `FUENTES`, que es otra lista y tiene más entradas: FUENTES
     es el anclaje interno del código (una por compuerta, incluidos manuales de
     coloides y fuentes que solo viven en comentarios) y es lo que vigila la
     guarda de `main()`. Esta lista son las referencias CITADAS EN EL SITIO, que
     son menos por definición. Que FUENTES tenga más entradas no es un hueco.
-
-    Verificado el 2026-08-22: las 4 páginas del sitio citan 14 apellido+año, y
-    las 14 tienen su entrada aquí.
     """
     return """<h2>Referencias</h2>
 <p class="rev">Las citas en el texto usan el número entre corchetes que corresponde a esta lista,
@@ -1401,6 +1457,10 @@ o [13-15].</p>
 <li id="ref20" value="20">Cheng MJ, Kumar R, Sridhar S, Webster TJ, Ebong EE. Endothelial glycocalyx conditions influence nanoparticle uptake for passive targeting. Int J Nanomedicine. 2016;11:3305-15. <a href="https://doi.org/10.2147/IJN.S106299" target="_blank" rel="noopener">doi:10.2147/IJN.S106299</a></li>
 <li id="ref21" value="21">Shi SM, Suh RJ, Shon DJ, Garcia FJ, Buff JK, Atkins M, et al. Glycocalyx dysregulation impairs blood-brain barrier in ageing and disease. Nature. 2025;639:985-94. <a href="https://doi.org/10.1038/s41586-025-08589-9" target="_blank" rel="noopener">doi:10.1038/s41586-025-08589-9</a></li>
 <li id="ref22" value="22">Larsen R, Kucharz K, Aydin S, Micael MKB, Choudhury B, Paulchakrabarti M, et al. Multi-omic analysis reveals the unique glycan landscape of the blood-brain barrier glycocalyx [preprint]. bioRxiv. 2025:2025.04.07.645297. <a href="https://doi.org/10.1101/2025.04.07.645297" target="_blank" rel="noopener">doi:10.1101/2025.04.07.645297</a></li>
+<li id="ref23" value="23">Wang X, Shen B, Yang W, Wang X, Li C, Wu H. A physics-informed neural network framework for quantitative analysis of transcytosis and physical diffusion in an in vitro BBB. J Nanobiotechnology. 2026;24:164. <a href="https://doi.org/10.1186/s12951-026-04023-y" target="_blank" rel="noopener">doi:10.1186/s12951-026-04023-y</a></li>
+<li id="ref24" value="24">Curtis C, McKenna M, Pontes C, Toghani D, Choe A, Nance E. Predicting in situ nanoparticle behavior using multiple particle tracking and artificial neural networks. Nanoscale. 2019;11(46):22515-30. <a href="https://doi.org/10.1039/c9nr06327g" target="_blank" rel="noopener">doi:10.1039/c9nr06327g</a></li>
+<li id="ref25" value="25">McKenna M, Shackelford D, Pontes C, Ball B, Nance E. Multiple particle tracking detects changes in brain extracellular matrix and predicts neurodevelopmental age. ACS Nano. 2021;15(5):8559-73. <a href="https://doi.org/10.1021/acsnano.1c00394" target="_blank" rel="noopener">doi:10.1021/acsnano.1c00394</a></li>
+<li id="ref26" value="26">Devarakonda B, Hill RA, de Villiers MM. The effect of PAMAM dendrimer generation size and surface functional group on the aqueous solubility of nifedipine. Int J Pharm. 2004;284(1-2):133-40. <a href="https://doi.org/10.1016/j.ijpharm.2004.07.006" target="_blank" rel="noopener">doi:10.1016/j.ijpharm.2004.07.006</a></li>
 </ol>
 """
 
