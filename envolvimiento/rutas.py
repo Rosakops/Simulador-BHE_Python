@@ -1439,10 +1439,24 @@ def figuras(prefijo="rutas", catalogo=None, incluir_ventanas=True):
         #  Es la figura que muestra de un vistazo por qué la ventana está vacía.
         etq_fab, lo_fab, hi_fab, fab_indef = _ventana_fabricable(catalogo)
         _u = _umbrales_modelo()
+        # Envolvimiento de membrana: si la figura es de UN solo diseño (el caso
+        # de cada liposoma del dataset de 50, y de cada diseño real/teórico
+        # individual), el umbral se recalcula con el ζ y el PEG propios de ESE
+        # diseño (g_envolvimiento depende de ambos vía w_adhesion), en vez de
+        # con el diseño de referencia neutro (20 nm, ζ=0, PEG=0) que usa
+        # _umbrales_modelo(). Así la barra coincide exactamente con el umbral
+        # que decidió el veredicto de esa compuerta para ese liposoma. Cuando
+        # la figura superpone varios diseños a la vez (páginas "reales" /
+        # "teóricos" combinadas), no hay un único umbral que dibujar, así que
+        # se conserva el de referencia. Modificado 2026-09-07.
+        if len(catalogo) == 1:
+            umbral_envolvimiento = g_envolvimiento(catalogo[0]).umbral
+        else:
+            umbral_envolvimiento = _u["envolvimiento"]
         ventanas = [
             (etq_fab, lo_fab, hi_fab, GRIS if fab_indef else VERDE),
             ("Tamiz del glicocálix",   1.0, _u["glicocalix"], VERDE),
-            ("Envolvimiento de membrana", _u["envolvimiento"], 2000.0, VERDE),
+            ("Envolvimiento de membrana", umbral_envolvimiento, 2000.0, VERDE),
             ("Compuerta de caveola",              1.0,   80.0, VERDE),
             ("Difusión extracelular (portador),\n"
              "  solo si ζ entre −4 y 0 mV",       1.0, D_SIGILOSO_PASA_nm, VERDE),
