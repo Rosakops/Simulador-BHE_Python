@@ -13,7 +13,10 @@
 #  (ventanas/matriz/recorrido con catalogo=[d], igual que hace
 #  figuras_liposoma_separadas() para reales/teóricos).
 #
-#  SALE: web/dataset_50.html, web/img/dataset_50/liposoma_NN_*.png
+#  SALE: web/dataset_50.html, web/img/dataset_50/liposoma_NN_*.png,
+#        web/img/dataset_50/dispersion_diametro_zeta_4rutas.png,
+#        web/img/dataset_50/ventana_tamano_dataset_50.png,
+#        web/img/dataset_50/matriz_veredictos_dataset_50.png
 # =============================================================================
 
 import html
@@ -21,6 +24,9 @@ from pathlib import Path
 
 import rutas as R
 from dataset_50_liposomas import generar
+from grafica_dispersion_dataset_50 import generar_grafica as generar_grafica_dispersion
+from grafica_ventana_tamano_dataset_50 import generar_grafica as generar_grafica_ventana
+from grafica_matriz_dataset_50 import generar_grafica as generar_grafica_matriz
 
 AQUI = Path(__file__).resolve().parent
 RAIZ = AQUI.parent
@@ -61,9 +67,78 @@ def _tabla_compuertas(resultados):
             f"<tbody>{''.join(filas)}</tbody></table>")
 
 
+
+# HTML+JS del lightbox de imagenes (igual que liposoma.html). String
+# NORMAL, no f-string: el JS usa llaves { } que romperian un f-string.
+LIGHTBOX_HTML = '''
+<div class="lightbox" id="lightbox"><span class="cerrar">&times;</span><img id="lightbox-img" src="" alt=""><span class="ayuda">clic en la imagen: zoom · clic afuera o Escape: cerrar</span></div>
+<script>
+(function(){
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.figura img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lbImg.classList.remove('zoom');
+      lb.classList.remove('zoom-activo');
+      lb.classList.add('abierto');
+    });
+  });
+  var arrastrando = false, movio = false, x0 = 0, y0 = 0, sl0 = 0, st0 = 0;
+  function empezarArrastre(x, y){
+    arrastrando = true; movio = false;
+    x0 = x; y0 = y; sl0 = lb.scrollLeft; st0 = lb.scrollTop;
+    lbImg.classList.add('arrastrando');
+  }
+  function moverArrastre(x, y){
+    if (!arrastrando) return;
+    if (Math.abs(x - x0) > 3 || Math.abs(y - y0) > 3) movio = true;
+    lb.scrollLeft = sl0 - (x - x0);
+    lb.scrollTop = st0 - (y - y0);
+  }
+  function terminarArrastre(){ arrastrando = false; lbImg.classList.remove('arrastrando'); }
+  lbImg.addEventListener('mousedown', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    e.preventDefault();
+    empezarArrastre(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', function(e){ moverArrastre(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', terminarArrastre);
+  lbImg.addEventListener('touchstart', function(e){
+    if (!lbImg.classList.contains('zoom')) return;
+    var t = e.touches[0]; empezarArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchmove', function(e){
+    var t = e.touches[0]; moverArrastre(t.clientX, t.clientY);
+  }, {passive: true});
+  lbImg.addEventListener('touchend', terminarArrastre);
+  lbImg.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (movio) { movio = false; return; }
+    lbImg.classList.toggle('zoom');
+    lb.classList.toggle('zoom-activo', lbImg.classList.contains('zoom'));
+    if (lbImg.classList.contains('zoom')) { lb.scrollTop = 0; lb.scrollLeft = 0; }
+  });
+  function cerrar(){
+    lb.classList.remove('abierto', 'zoom-activo');
+    lbImg.classList.remove('zoom');
+    lbImg.src = '';
+  }
+  lb.addEventListener('click', cerrar);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrar(); });
+})();
+</script>
+</body>
+</html>'''
+
 def construir():
     IMG_DIR.mkdir(parents=True, exist_ok=True)
     disenos = generar()
+
+    generar_grafica_dispersion(disenos)
+    generar_grafica_ventana(disenos)
+    generar_grafica_matriz(disenos)
 
     filas_tabla = []
     detalles = []
@@ -99,9 +174,9 @@ def construir():
 PEG {d.peg_nm:.2f} nm</summary>
 <div class="detalle">
   <div class="figuras3">
-    <img src="{img_rel}_ventanas.png" alt="ventanas">
-    <img src="{img_rel}_matriz.png" alt="matriz">
-    <img src="{img_rel}_recorrido.png" alt="recorrido">
+    <div class="figura"><img src="{img_rel}_ventanas.png" alt="ventanas" loading="lazy"></div>
+    <div class="figura"><img src="{img_rel}_matriz.png" alt="matriz" loading="lazy"></div>
+    <div class="figura"><img src="{img_rel}_recorrido.png" alt="recorrido" loading="lazy"></div>
   </div>
   {''.join(bloques_rutas)}
 </div>
@@ -147,6 +222,30 @@ vigente del 2026-08-13.</p>
 </tbody>
 </table>
 
+<h2>Dispersión Diámetro vs Potencial zeta por ruta</h2>
+<p>Diámetro (nm) vs Potencial zeta (mV) de los 50 liposomas, un panel por
+ruta de entrada a la BHE. La banda de la compuerta de caveola (60-80 nm)
+solo aparece en el panel A, la única ruta que la usa. A, C y D dan el mismo
+veredicto en los 50 diseños porque comparten la compuerta "Difusión en
+espacio extracelular (transportador)", que es la única que decide en este
+dataset — no es casualidad del muestreo.</p>
+<div class="figura"><img src="img/dataset_50/dispersion_diametro_zeta_4rutas.png"
+     alt="Dispersión diámetro vs zeta por ruta" loading="lazy"></div>
+
+<h2>Ventanas de tamaño · 50 liposomas</h2>
+<p>Diámetro de cada liposoma superpuesto sobre el rango permitido por cada
+compuerta que depende del tamaño. Cada punto es un diseño, coloreado por su
+resultado (PASA/FALLA/DESCONOCIDA) en ESA compuerta específica.</p>
+<div class="figura"><img src="img/dataset_50/ventana_tamano_dataset_50.png"
+     alt="Ventanas de tamaño, 50 liposomas" loading="lazy"></div>
+
+<h2>Matriz de veredictos · 50 liposomas × 4 rutas</h2>
+<p>Veredicto de cada uno de los 50 liposomas en las 4 rutas de entrada a la
+BHE, como mapa de calor compacto (rojo = EXCLUIDA, gris = NO EVALUABLE,
+verde = NO EXCLUIDA).</p>
+<div class="figura"><img src="img/dataset_50/matriz_veredictos_dataset_50.png"
+     alt="Matriz de veredictos, 50 liposomas" loading="lazy"></div>
+
 <h2>Detalle por liposoma</h2>
 <p>Clic sobre cada fila para desplegar sus 3 figuras y el desglose de compuertas por ruta.</p>
 {''.join(detalles)}
@@ -155,7 +254,9 @@ vigente del 2026-08-13.</p>
 </body>
 </html>'''
 
-    (SALIDA / "dataset_50.html").write_text(html_out, encoding="utf-8")
+
+    html_out_final = html_out.replace("</body>\n</html>", LIGHTBOX_HTML)
+    (SALIDA / "dataset_50.html").write_text(html_out_final, encoding="utf-8")
     print(f"  {SALIDA / 'dataset_50.html'}")
     print(f"  {len(disenos) * 3} figuras en {IMG_DIR}")
 
